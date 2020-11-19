@@ -853,10 +853,6 @@ public interface TextChannel extends Channel, Messageable, TextChannelAttachable
         if (privateChannel.isPresent()) {
             return user.isYourself() || privateChannel.get().getRecipient() == user;
         }
-        Optional<GroupChannel> groupChannel = asGroupChannel();
-        if (groupChannel.isPresent()) {
-            return user.isYourself() || groupChannel.get().getMembers().contains(user);
-        }
         Optional<ServerTextChannel> severTextChannel = asServerTextChannel();
         return !severTextChannel.isPresent()
                || severTextChannel.get().hasPermission(user, PermissionType.ADMINISTRATOR)
@@ -1015,10 +1011,6 @@ public interface TextChannel extends Channel, Messageable, TextChannelAttachable
         if (privateChannel.isPresent()) {
             return user.isYourself() || privateChannel.get().getRecipient() == user;
         }
-        Optional<GroupChannel> groupChannel = asGroupChannel();
-        if (groupChannel.isPresent()) {
-            return user.isYourself() || groupChannel.get().getMembers().contains(user);
-        }
         Optional<ServerTextChannel> severTextChannel = asServerTextChannel();
         return !severTextChannel.isPresent()
                || severTextChannel.get().hasPermission(user, PermissionType.ADMINISTRATOR)
@@ -1045,10 +1037,6 @@ public interface TextChannel extends Channel, Messageable, TextChannelAttachable
         Optional<PrivateChannel> privateChannel = asPrivateChannel();
         if (privateChannel.isPresent()) {
             return user.isYourself() || privateChannel.get().getRecipient() == user;
-        }
-        Optional<GroupChannel> groupChannel = asGroupChannel();
-        if (groupChannel.isPresent()) {
-            return user.isYourself() || groupChannel.get().getMembers().contains(user);
         }
         Optional<ServerTextChannel> severTextChannel = asServerTextChannel();
         return !severTextChannel.isPresent()

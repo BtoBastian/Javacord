@@ -1,6 +1,5 @@
 package org.javacord.api.entity.message;
 
-import org.javacord.api.AccountType;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.Icon;
@@ -96,7 +95,7 @@ public interface MessageAuthor extends DiscordEntity, Nameable {
      * @return Whether the author is the owner of the current account.
      */
     default boolean isBotOwner() {
-        return getApi().getAccountType() == AccountType.BOT && isUser() && getApi().getOwnerId() == getId();
+        return isUser() && getApi().getOwnerId() == getId();
     }
 
     /**

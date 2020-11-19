@@ -6,21 +6,16 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.Channel;
 import org.javacord.api.entity.channel.ChannelCategory;
 import org.javacord.api.entity.channel.ChannelType;
-import org.javacord.api.entity.channel.GroupChannel;
 import org.javacord.api.entity.channel.ServerChannel;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerVoiceChannel;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.channel.VoiceChannel;
-import org.javacord.api.event.channel.group.GroupChannelDeleteEvent;
 import org.javacord.api.event.channel.server.ServerChannelDeleteEvent;
-import org.javacord.core.event.channel.group.GroupChannelDeleteEventImpl;
 import org.javacord.core.event.channel.server.ServerChannelDeleteEventImpl;
 import org.javacord.core.util.event.DispatchQueueSelector;
 import org.javacord.core.util.gateway.PacketHandler;
 import org.javacord.core.util.logging.LoggerUtil;
-
-import java.util.Collections;
 
 /**
  * Handles the channel delete packet.
@@ -52,7 +47,7 @@ public class ChannelDeleteHandler extends PacketHandler {
                 handleServerVoiceChannel(packet);
                 break;
             case GROUP_CHANNEL:
-                handleGroupChannel(packet);
+                logger.info("Received an update for a group channel. This should be impossible.");
                 break;
             case CHANNEL_CATEGORY:
                 handleCategory(packet);
@@ -151,30 +146,6 @@ public class ChannelDeleteHandler extends PacketHandler {
         //     );
         //     recipient.setChannel(null);
         // });
-    }
-
-    /**
-     * Handles a group channel deletion.
-     *
-     * @param channel The channel data.
-     */
-    private void handleGroupChannel(JsonNode channel) {
-        long channelId = channel.get("id").asLong();
-
-        api.getGroupChannelById(channelId).ifPresent(groupChannel -> {
-            GroupChannelDeleteEvent event = new GroupChannelDeleteEventImpl(groupChannel);
-
-            api.getEventDispatcher().dispatchGroupChannelDeleteEvent(
-                    api, Collections.singleton(groupChannel), groupChannel.getMembers(), event);
-            api.removeObjectListeners(GroupChannel.class, channelId);
-            api.removeObjectListeners(VoiceChannel.class, channelId);
-            api.removeObjectListeners(TextChannel.class, channelId);
-            api.removeObjectListeners(Channel.class, channelId);
-            api.forEachCachedMessageWhere(
-                    msg -> msg.getChannel().getId() == groupChannel.getId(),
-                    msg -> api.removeMessageFromCache(msg.getId())
-            );
-        });
     }
 
     /**

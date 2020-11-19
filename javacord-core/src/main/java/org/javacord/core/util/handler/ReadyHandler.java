@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.logging.log4j.Logger;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ChannelType;
-import org.javacord.core.entity.channel.GroupChannelImpl;
 import org.javacord.core.entity.channel.PrivateChannelImpl;
 import org.javacord.core.entity.server.ServerImpl;
 import org.javacord.core.entity.user.MemberImpl;
@@ -52,7 +51,7 @@ public class ReadyHandler extends PacketHandler {
                         new PrivateChannelImpl(api, channelJson);
                         break;
                     case GROUP_CHANNEL:
-                        new GroupChannelImpl(api, channelJson);
+                        logger.warn("Received a group channel which should be unavailable for bots.");
                         break;
                     default:
                         logger.warn("Unknown or unexpected channel type. Your Javacord version might be out of date!");

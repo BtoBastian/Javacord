@@ -203,29 +203,6 @@ public class DiscordApiBuilder implements ChainableGloballyAttachableListenerMan
     }
 
     /**
-     * Sets the account type.
-     * By default the builder assumes that you want to login to a bot account.
-     * Please notice, that public client bots are not allowed by Discord!
-     *
-     * @param type The account type.
-     * @return The current instance in order to chain call methods.
-     */
-    public DiscordApiBuilder setAccountType(AccountType type) {
-        delegate.setAccountType(type);
-        return this;
-    }
-
-    /**
-     * Gets the account type.
-     *
-     * @return The account type.
-     * @see #setAccountType(AccountType)
-     */
-    public AccountType getAccountType() {
-        return delegate.getAccountType();
-    }
-
-    /**
      * Sets total shards for server sharding.
      * Sharding allows you to split your bot into several independent instances.
      * A shard only handles a subset of a bot's servers.

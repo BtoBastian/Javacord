@@ -5,19 +5,15 @@ import org.apache.logging.log4j.Logger;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ChannelCategory;
 import org.javacord.api.entity.channel.ChannelType;
-import org.javacord.api.entity.channel.GroupChannel;
 import org.javacord.api.entity.channel.PrivateChannel;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerVoiceChannel;
-import org.javacord.api.event.channel.group.GroupChannelCreateEvent;
 import org.javacord.api.event.channel.server.ServerChannelCreateEvent;
 import org.javacord.api.event.channel.user.PrivateChannelCreateEvent;
-import org.javacord.core.entity.channel.GroupChannelImpl;
 import org.javacord.core.entity.channel.PrivateChannelImpl;
 import org.javacord.core.entity.server.ServerImpl;
 import org.javacord.core.entity.user.MemberImpl;
 import org.javacord.core.entity.user.UserImpl;
-import org.javacord.core.event.channel.group.GroupChannelCreateEventImpl;
 import org.javacord.core.event.channel.server.ServerChannelCreateEventImpl;
 import org.javacord.core.event.channel.user.PrivateChannelCreateEventImpl;
 import org.javacord.core.util.event.DispatchQueueSelector;
@@ -54,7 +50,7 @@ public class ChannelCreateHandler extends PacketHandler {
                 handleServerVoiceChannel(packet);
                 break;
             case GROUP_CHANNEL:
-                handleGroupChannel(packet);
+                logger.info("Received an update for a group channel. This should be impossible.");
                 break;
             case CHANNEL_CATEGORY:
                 handleChannelCategory(packet);
@@ -133,21 +129,6 @@ public class ChannelCreateHandler extends PacketHandler {
             PrivateChannelCreateEvent event = new PrivateChannelCreateEventImpl(privateChannel);
 
             api.getEventDispatcher().dispatchPrivateChannelCreateEvent(api, recipient, event);
-        }
-    }
-
-    /**
-     * Handles a group channel creation.
-     *
-     * @param channel The channel data.
-     */
-    private void handleGroupChannel(JsonNode channel) {
-        long channelId = channel.get("id").asLong();
-        if (!api.getGroupChannelById(channelId).isPresent()) {
-            GroupChannel groupChannel = new GroupChannelImpl(api, channel);
-            GroupChannelCreateEvent event = new GroupChannelCreateEventImpl(groupChannel);
-
-            api.getEventDispatcher().dispatchGroupChannelCreateEvent(api, groupChannel.getMembers(), event);
         }
     }
 

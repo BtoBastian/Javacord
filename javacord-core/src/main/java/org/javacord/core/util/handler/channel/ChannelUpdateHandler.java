@@ -11,7 +11,6 @@ import org.javacord.api.entity.channel.ServerChannel;
 import org.javacord.api.entity.permission.Permissions;
 import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.user.User;
-import org.javacord.api.event.channel.group.GroupChannelChangeNameEvent;
 import org.javacord.api.event.channel.server.ServerChannelChangeNameEvent;
 import org.javacord.api.event.channel.server.ServerChannelChangeNsfwFlagEvent;
 import org.javacord.api.event.channel.server.ServerChannelChangeOverwrittenPermissionsEvent;
@@ -21,13 +20,11 @@ import org.javacord.api.event.channel.server.text.ServerTextChannelChangeTopicEv
 import org.javacord.api.event.channel.server.voice.ServerVoiceChannelChangeBitrateEvent;
 import org.javacord.api.event.channel.server.voice.ServerVoiceChannelChangeUserLimitEvent;
 import org.javacord.core.entity.channel.ChannelCategoryImpl;
-import org.javacord.core.entity.channel.GroupChannelImpl;
 import org.javacord.core.entity.channel.ServerChannelImpl;
 import org.javacord.core.entity.channel.ServerTextChannelImpl;
 import org.javacord.core.entity.channel.ServerVoiceChannelImpl;
 import org.javacord.core.entity.permission.PermissionsImpl;
 import org.javacord.core.entity.server.ServerImpl;
-import org.javacord.core.event.channel.group.GroupChannelChangeNameEventImpl;
 import org.javacord.core.event.channel.server.ServerChannelChangeNameEventImpl;
 import org.javacord.core.event.channel.server.ServerChannelChangeNsfwFlagEventImpl;
 import org.javacord.core.event.channel.server.ServerChannelChangeOverwrittenPermissionsEventImpl;
@@ -41,7 +38,6 @@ import org.javacord.core.util.gateway.PacketHandler;
 import org.javacord.core.util.logging.LoggerUtil;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -82,7 +78,7 @@ public class ChannelUpdateHandler extends PacketHandler {
                 handleServerVoiceChannel(packet);
                 break;
             case GROUP_CHANNEL:
-                handleGroupChannel(packet);
+                logger.info("Received an update for a group channel. This should be impossible.");
                 break;
             case CHANNEL_CATEGORY:
                 handleServerChannel(packet);
@@ -354,28 +350,6 @@ public class ChannelUpdateHandler extends PacketHandler {
      * @param channel The channel data.
      */
     private void handlePrivateChannel(JsonNode channel) {
-    }
-
-    /**
-     * Handles a group channel update.
-     *
-     * @param jsonChannel The channel data.
-     */
-    private void handleGroupChannel(JsonNode jsonChannel) {
-        long channelId = jsonChannel.get("id").asLong();
-        api.getGroupChannelById(channelId).map(GroupChannelImpl.class::cast).ifPresent(channel -> {
-            String oldName = channel.getName().orElseThrow(AssertionError::new);
-            String newName = jsonChannel.get("name").asText();
-            if (!Objects.equals(oldName, newName)) {
-                channel.setName(newName);
-
-                GroupChannelChangeNameEvent event =
-                        new GroupChannelChangeNameEventImpl(channel, newName, oldName);
-
-                api.getEventDispatcher().dispatchGroupChannelChangeNameEvent(
-                        api, Collections.singleton(channel), channel.getMembers(), event);
-            }
-        });
     }
 
     /**

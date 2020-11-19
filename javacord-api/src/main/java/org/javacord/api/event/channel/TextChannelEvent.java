@@ -1,6 +1,5 @@
 package org.javacord.api.event.channel;
 
-import org.javacord.api.entity.channel.GroupChannel;
 import org.javacord.api.entity.channel.PrivateChannel;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.TextChannel;
@@ -31,15 +30,6 @@ public interface TextChannelEvent extends ChannelEvent {
      */
     default Optional<PrivateChannel> getPrivateChannel() {
         return getChannel().asPrivateChannel();
-    }
-
-    /**
-     * Gets the channel of the event as a group channel.
-     *
-     * @return The channel of the event as a group channel.
-     */
-    default Optional<GroupChannel> getGroupChannel() {
-        return getChannel().asGroupChannel();
     }
 
 }

@@ -4,7 +4,6 @@ import io.netty.handler.codec.http.HttpHeaderNames
 import okhttp3.Credentials
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.test.appender.ListAppender
-import org.javacord.api.AccountType
 import org.javacord.api.entity.server.Server
 import org.javacord.api.exception.NotFoundException
 import org.javacord.test.MockProxyManager
@@ -66,7 +65,6 @@ class DiscordApiImplTest extends Specification {
             'getRolesByName'                         | [null]
             'getRolesByNameIgnoreCase'               | [null]
             'getChannels'                            | []
-            'getGroupChannels'                       | []
             'getPrivateChannels'                     | []
             'getServerChannels'                      | []
             'getChannelCategories'                   | []
@@ -88,8 +86,6 @@ class DiscordApiImplTest extends Specification {
             'getServerTextChannelsByNameIgnoreCase'  | [null]
             'getServerVoiceChannelsByName'           | [null]
             'getServerVoiceChannelsByNameIgnoreCase' | [null]
-            'getGroupChannelsByName'                 | [null]
-            'getGroupChannelsByNameIgnoreCase'       | [null]
             'getAllServers'                          | []
     }
 
@@ -320,7 +316,8 @@ class DiscordApiImplTest extends Specification {
             MockProxyManager.setSocks4SystemProperties()
 
         and:
-            def api = new DiscordApiImpl(AccountType.BOT, 'fakeBotToken', 0, 1, Collections.emptySet(), false, false, null, null, null, null, true,
+            def api = new DiscordApiImpl('fakeBotToken', 0, 1, Collections.emptySet(), false, false, null,
+                    null, null, null, true,
                     null, { [InetAddress.getLoopbackAddress()] })
 
         when:

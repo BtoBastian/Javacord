@@ -2,12 +2,10 @@ package org.javacord.api.util.internal;
 
 import org.javacord.api.DiscordApi;
 import org.javacord.api.audio.internal.AudioSourceBaseDelegate;
-import org.javacord.api.entity.channel.GroupChannel;
 import org.javacord.api.entity.channel.ServerChannel;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerVoiceChannel;
 import org.javacord.api.entity.channel.internal.ChannelCategoryBuilderDelegate;
-import org.javacord.api.entity.channel.internal.GroupChannelUpdaterDelegate;
 import org.javacord.api.entity.channel.internal.ServerChannelUpdaterDelegate;
 import org.javacord.api.entity.channel.internal.ServerTextChannelBuilderDelegate;
 import org.javacord.api.entity.channel.internal.ServerTextChannelUpdaterDelegate;
@@ -156,14 +154,6 @@ public interface DelegateFactoryDelegate {
      * @return A new account updater delegate.
      */
     AccountUpdaterDelegate createAccountUpdaterDelegate(DiscordApi api);
-
-    /**
-     * Creates a new group channel updater delegate.
-     *
-     * @param channel The channel to update.
-     * @return A new group channel updater delegate.
-     */
-    GroupChannelUpdaterDelegate createGroupChannelUpdaterDelegate(GroupChannel channel);
 
     /**
      * Creates a new server channel updater delegate.

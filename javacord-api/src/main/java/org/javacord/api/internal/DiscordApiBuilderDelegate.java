@@ -1,6 +1,5 @@
 package org.javacord.api.internal;
 
-import org.javacord.api.AccountType;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.intent.Intent;
@@ -72,20 +71,6 @@ public interface DiscordApiBuilderDelegate {
      * @return The token.
      */
     Optional<String> getToken();
-
-    /**
-     * Sets the account type.
-     *
-     * @param accountType The account type to set.
-     */
-    void setAccountType(AccountType accountType);
-
-    /**
-     * Gets the account type.
-     *
-     * @return The account type.
-     */
-    AccountType getAccountType();
 
     /**
      * Sets the total shards.

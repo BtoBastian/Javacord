@@ -6,7 +6,6 @@ import org.javacord.api.entity.activity.Activity;
 import org.javacord.api.entity.activity.ActivityType;
 import org.javacord.api.entity.channel.Channel;
 import org.javacord.api.entity.channel.ChannelCategory;
-import org.javacord.api.entity.channel.GroupChannel;
 import org.javacord.api.entity.channel.PrivateChannel;
 import org.javacord.api.entity.channel.ServerChannel;
 import org.javacord.api.entity.channel.ServerTextChannel;
@@ -41,7 +40,6 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -66,9 +64,8 @@ public interface DiscordApi extends GloballyAttachableListenerManager {
     String getToken();
 
     /**
-     * Gets the used token with the {@link AccountType#getTokenPrefix()}, that
-     * way it is usable directly in the authentication header for custom
-     * REST calls.
+     * Gets the used token with the bot prefix, that way it is usable directly
+     * in the authentication header for custom REST calls.
      *
      * @return The prefixed, used token.
      */
@@ -94,13 +91,6 @@ public interface DiscordApi extends GloballyAttachableListenerManager {
      * @return A utility class to interact with uncached messages.
      */
     UncachedMessageUtil getUncachedMessageUtil();
-
-    /**
-     * Gets the type of the current account.
-     *
-     * @return The type of the current account.
-     */
-    AccountType getAccountType();
 
     /**
      * Gets the current global ratelimiter.
@@ -162,7 +152,6 @@ public interface DiscordApi extends GloballyAttachableListenerManager {
      * The method only works for bot accounts!
      *
      * @return An invite link for this bot.
-     * @throws IllegalStateException If the current account is not {@link AccountType#BOT}.
      */
     default String createBotInvite() {
         return new BotInviteBuilder(getClientId()).build();
@@ -174,7 +163,6 @@ public interface DiscordApi extends GloballyAttachableListenerManager {
      *
      * @param permissions The permissions which should be granted to the bot.
      * @return An invite link for this bot.
-     * @throws IllegalStateException If the current account is not {@link AccountType#BOT}.
      */
     default String createBotInvite(Permissions permissions) {
         return new BotInviteBuilder(getClientId()).setPermissions(permissions).build();
@@ -318,7 +306,6 @@ public interface DiscordApi extends GloballyAttachableListenerManager {
      * Gets the id of the application's owner.
      *
      * @return The id of the application's owner.
-     * @throws IllegalStateException If the current account is not {@link AccountType#BOT}.
      */
     long getOwnerId();
 
@@ -326,7 +313,6 @@ public interface DiscordApi extends GloballyAttachableListenerManager {
      * Gets the owner of the application.
      *
      * @return The owner of the application.
-     * @throws IllegalStateException If the current account is not {@link AccountType#BOT}.
      */
     default CompletableFuture<User> getOwner() {
         return getUserById(getOwnerId());
@@ -336,7 +322,6 @@ public interface DiscordApi extends GloballyAttachableListenerManager {
      * Gets the client id of the application.
      *
      * @return The client id of the application.
-     * @throws IllegalStateException If the current account is not {@link AccountType#BOT}.
      */
     long getClientId();
 
@@ -1153,13 +1138,6 @@ public interface DiscordApi extends GloballyAttachableListenerManager {
     Collection<Channel> getChannels();
 
     /**
-     * Gets a collection with all group channels of the bot.
-     *
-     * @return A collection with all group channels of the bot.
-     */
-    Collection<GroupChannel> getGroupChannels();
-
-    /**
      * Gets a collection with all private channels of the bot.
      *
      * @return A collection with all private channels of the bot.
@@ -1238,9 +1216,7 @@ public interface DiscordApi extends GloballyAttachableListenerManager {
      * @return A collection with all channels with the given name.
      */
     default Collection<Channel> getChannelsByName(String name) {
-        Collection<Channel> channels = new HashSet<>();
-        channels.addAll(getServerChannelsByName(name));
-        channels.addAll(getGroupChannelsByName(name));
+        Collection<Channel> channels = new HashSet<>(getServerChannelsByName(name));
         return Collections.unmodifiableCollection(channels);
     }
 
@@ -1252,9 +1228,7 @@ public interface DiscordApi extends GloballyAttachableListenerManager {
      * @return A collection with all channels with the given name.
      */
     default Collection<Channel> getChannelsByNameIgnoreCase(String name) {
-        Collection<Channel> channels = new HashSet<>();
-        channels.addAll(getServerChannelsByNameIgnoreCase(name));
-        channels.addAll(getGroupChannelsByNameIgnoreCase(name));
+        Collection<Channel> channels = new HashSet<>(getServerChannelsByNameIgnoreCase(name));
         return Collections.unmodifiableCollection(channels);
     }
 
@@ -1290,9 +1264,7 @@ public interface DiscordApi extends GloballyAttachableListenerManager {
      * @return A collection with all text channels with the given name.
      */
     default Collection<TextChannel> getTextChannelsByName(String name) {
-        Collection<TextChannel> channels = new HashSet<>();
-        channels.addAll(getServerTextChannelsByName(name));
-        channels.addAll(getGroupChannelsByName(name));
+        Collection<TextChannel> channels = new HashSet<>(getServerTextChannelsByName(name));
         return Collections.unmodifiableCollection(channels);
     }
 
@@ -1304,9 +1276,7 @@ public interface DiscordApi extends GloballyAttachableListenerManager {
      * @return A collection with all text channels with the given name.
      */
     default Collection<TextChannel> getTextChannelsByNameIgnoreCase(String name) {
-        Collection<TextChannel> channels = new HashSet<>();
-        channels.addAll(getServerTextChannelsByNameIgnoreCase(name));
-        channels.addAll(getGroupChannelsByNameIgnoreCase(name));
+        Collection<TextChannel> channels = new HashSet<>(getServerTextChannelsByNameIgnoreCase(name));
         return Collections.unmodifiableCollection(channels);
     }
 
@@ -1342,9 +1312,7 @@ public interface DiscordApi extends GloballyAttachableListenerManager {
      * @return A collection with all voice channels with the given name.
      */
     default Collection<VoiceChannel> getVoiceChannelsByName(String name) {
-        Collection<VoiceChannel> channels = new HashSet<>();
-        channels.addAll(getServerVoiceChannelsByName(name));
-        channels.addAll(getGroupChannelsByName(name));
+        Collection<VoiceChannel> channels = new HashSet<>(getServerVoiceChannelsByName(name));
         return Collections.unmodifiableCollection(channels);
     }
 
@@ -1356,9 +1324,7 @@ public interface DiscordApi extends GloballyAttachableListenerManager {
      * @return A collection with all voice channels with the given name.
      */
     default Collection<VoiceChannel> getVoiceChannelsByNameIgnoreCase(String name) {
-        Collection<VoiceChannel> channels = new HashSet<>();
-        channels.addAll(getServerVoiceChannelsByNameIgnoreCase(name));
-        channels.addAll(getGroupChannelsByNameIgnoreCase(name));
+        Collection<VoiceChannel> channels = new HashSet<>(getServerVoiceChannelsByNameIgnoreCase(name));
         return Collections.unmodifiableCollection(channels);
     }
 
@@ -1592,64 +1558,6 @@ public interface DiscordApi extends GloballyAttachableListenerManager {
         } catch (NumberFormatException e) {
             return Optional.empty();
         }
-    }
-
-    /**
-     * Gets a group channel by its id.
-     *
-     * @param id The id of the group channel.
-     * @return The group channel with the given id.
-     */
-    default Optional<GroupChannel> getGroupChannelById(long id) {
-        return getChannelById(id).flatMap(Channel::asGroupChannel);
-    }
-
-    /**
-     * Gets a group channel by its id.
-     *
-     * @param id The id of the group channel.
-     * @return The group channel with the given id.
-     */
-    default Optional<GroupChannel> getGroupChannelById(String id) {
-        try {
-            return getGroupChannelById(Long.parseLong(id));
-        } catch (NumberFormatException e) {
-            return Optional.empty();
-        }
-    }
-
-    /**
-     * Gets a collection with all group channels with the given name.
-     * This method is case sensitive!
-     *
-     * @param name The name of the group channels. Can be <code>null</code> to search for group channels without name.
-     * @return A collection with all group channels with the given name.
-     */
-    default Collection<GroupChannel> getGroupChannelsByName(String name) {
-        return Collections.unmodifiableList(
-                getGroupChannels().stream()
-                        .filter(channel -> Objects.deepEquals(channel.getName().orElse(null), name))
-                        .collect(Collectors.toList()));
-    }
-
-    /**
-     * Gets a collection with all server channels with the given name.
-     * This method is case insensitive!
-     *
-     * @param name The name of the group channels. Can be <code>null</code> to search for group channels without name.
-     * @return A collection with all group channels with the given name.
-     */
-    default Collection<GroupChannel> getGroupChannelsByNameIgnoreCase(String name) {
-        return Collections.unmodifiableList(
-                getGroupChannels().stream()
-                        .filter(channel -> {
-                            String channelName = channel.getName().orElse(null);
-                            if (name == null || channelName == null) {
-                                return Objects.deepEquals(channelName, name);
-                            }
-                            return name.equalsIgnoreCase(channelName);
-                        })
-                        .collect(Collectors.toList()));
     }
 
 }

@@ -7,7 +7,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import okhttp3.logging.HttpLoggingInterceptor.Level;
 import org.apache.logging.log4j.Logger;
-import org.javacord.api.AccountType;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.Javacord;
 import org.javacord.api.entity.ApplicationInfo;
@@ -16,7 +15,6 @@ import org.javacord.api.entity.activity.ActivityType;
 import org.javacord.api.entity.channel.Channel;
 import org.javacord.api.entity.channel.ChannelCategory;
 import org.javacord.api.entity.channel.ChannelType;
-import org.javacord.api.entity.channel.GroupChannel;
 import org.javacord.api.entity.channel.PrivateChannel;
 import org.javacord.api.entity.channel.ServerChannel;
 import org.javacord.api.entity.channel.ServerTextChannel;
@@ -122,6 +120,11 @@ public class DiscordApiImpl implements DiscordApi, DispatchQueueSelector {
     private static final Map<String, Ratelimiter> defaultGlobalRatelimiter = new ConcurrentHashMap<>();
 
     /**
+     * The key prefix for bot accounts.
+     */
+    private static final String BOT_TOKEN_PREFIX = "Bot ";
+
+    /**
      * The thread pool which is used internally.
      */
     private final ThreadPoolImpl threadPool = new ThreadPoolImpl();
@@ -155,11 +158,6 @@ public class DiscordApiImpl implements DiscordApi, DispatchQueueSelector {
      * The websocket adapter used to connect to Discord.
      */
     private volatile DiscordWebSocketAdapter websocketAdapter = null;
-
-    /**
-     * The account type of the bot.
-     */
-    private final AccountType accountType;
 
     /**
      * The token used for authentication.
@@ -384,14 +382,13 @@ public class DiscordApiImpl implements DiscordApi, DispatchQueueSelector {
      */
     public DiscordApiImpl(String token, Ratelimiter globalRatelimiter, ProxySelector proxySelector, Proxy proxy,
                           Authenticator proxyAuthenticator, boolean trustAllCertificates) {
-        this(AccountType.BOT, token, 0, 1, Collections.emptySet(), true, false, globalRatelimiter,
+        this(token, 0, 1, Collections.emptySet(), true, false, globalRatelimiter,
                 proxySelector, proxy, proxyAuthenticator, trustAllCertificates, null);
     }
 
     /**
      * Creates a new discord api instance.
      *
-     * @param accountType             The account type of the instance.
      * @param token                   The token used to connect without any account type specific prefix.
      * @param currentShard            The current shard the bot should connect to.
      * @param totalShards             The total amount of shards.
@@ -410,7 +407,6 @@ public class DiscordApiImpl implements DiscordApi, DispatchQueueSelector {
      * @param ready                   The future which will be completed when the connection to Discord was successful.
      */
     public DiscordApiImpl(
-            AccountType accountType,
             String token,
             int currentShard,
             int totalShards,
@@ -424,7 +420,7 @@ public class DiscordApiImpl implements DiscordApi, DispatchQueueSelector {
             boolean trustAllCertificates,
             CompletableFuture<DiscordApi> ready
     ) {
-        this(accountType, token, currentShard, totalShards, intents, waitForServersOnStartup, waitForUsersOnStartup,
+        this(token, currentShard, totalShards, intents, waitForServersOnStartup, waitForUsersOnStartup,
                 true, globalRatelimiter,  proxySelector, proxy, proxyAuthenticator, trustAllCertificates, ready, null,
                 Collections.emptyMap(), Collections.emptyList());
     }
@@ -432,7 +428,6 @@ public class DiscordApiImpl implements DiscordApi, DispatchQueueSelector {
     /**
      * Creates a new discord api instance.
      *
-     * @param accountType             The account type of the instance.
      * @param token                   The token used to connect without any account type specific prefix.
      * @param currentShard            The current shard the bot should connect to.
      * @param totalShards             The total amount of shards.
@@ -452,7 +447,6 @@ public class DiscordApiImpl implements DiscordApi, DispatchQueueSelector {
      * @param dns                     The DNS instance to use in the OkHttp client. This should only be used in testing.
      */
     private DiscordApiImpl(
-            AccountType accountType,
             String token,
             int currentShard,
             int totalShards,
@@ -466,14 +460,13 @@ public class DiscordApiImpl implements DiscordApi, DispatchQueueSelector {
             boolean trustAllCertificates,
             CompletableFuture<DiscordApi> ready,
             Dns dns) {
-        this(accountType, token, currentShard, totalShards, intents, waitForServersOnStartup, waitForUsersOnStartup,
+        this(token, currentShard, totalShards, intents, waitForServersOnStartup, waitForUsersOnStartup,
                 true, globalRatelimiter, proxySelector, proxy, proxyAuthenticator, trustAllCertificates, ready, dns,
                 Collections.emptyMap(), Collections.emptyList());
     }
 
     /**
      * Creates a new discord api instance.
-     * @param accountType             The account type of the instance.
      * @param token                   The token used to connect without any account type specific prefix.
      * @param currentShard            The current shard the bot should connect to.
      * @param totalShards             The total amount of shards.
@@ -497,7 +490,6 @@ public class DiscordApiImpl implements DiscordApi, DispatchQueueSelector {
      */
     @SuppressWarnings("unchecked")
     public DiscordApiImpl(
-            AccountType accountType,
             String token,
             int currentShard,
             int totalShards,
@@ -516,7 +508,6 @@ public class DiscordApiImpl implements DiscordApi, DispatchQueueSelector {
                     List<Function<DiscordApi,GloballyAttachableListener>>
                     > listenerSourceMap,
             List<Function<DiscordApi, GloballyAttachableListener>> unspecifiedListeners) {
-        this.accountType = accountType;
         this.token = token;
         this.currentShard = currentShard;
         this.totalShards = totalShards;
@@ -584,19 +575,15 @@ public class DiscordApiImpl implements DiscordApi, DispatchQueueSelector {
                                     .map(source -> source.apply(this))
                                     .forEach(this::addListener);
                             // Application information
-                            if (accountType == AccountType.BOT) {
-                                getApplicationInfo().whenComplete((applicationInfo, exception) -> {
-                                    if (exception != null) {
-                                        logger.error("Could not access self application info on startup!", exception);
-                                    } else {
-                                        clientId = applicationInfo.getClientId();
-                                        ownerId = applicationInfo.getOwnerId();
-                                    }
-                                    ready.complete(this);
-                                });
-                            } else {
+                            getApplicationInfo().whenComplete((applicationInfo, exception) -> {
+                                if (exception != null) {
+                                    logger.error("Could not access self application info on startup!", exception);
+                                } else {
+                                    clientId = applicationInfo.getClientId();
+                                    ownerId = applicationInfo.getOwnerId();
+                                }
                                 ready.complete(this);
-                            }
+                            });
                         } else {
                             threadPool.shutdown();
                             ready.completeExceptionally(
@@ -1270,7 +1257,7 @@ public class DiscordApiImpl implements DiscordApi, DispatchQueueSelector {
 
     @Override
     public String getPrefixedToken() {
-        return accountType.getTokenPrefix() + token;
+        return BOT_TOKEN_PREFIX + token;
     }
 
     @Override
@@ -1305,11 +1292,6 @@ public class DiscordApiImpl implements DiscordApi, DispatchQueueSelector {
      */
     public DiscordWebSocketAdapter getWebSocketAdapter() {
         return websocketAdapter;
-    }
-
-    @Override
-    public AccountType getAccountType() {
-        return accountType;
     }
 
     @Override
@@ -1504,17 +1486,11 @@ public class DiscordApiImpl implements DiscordApi, DispatchQueueSelector {
 
     @Override
     public long getOwnerId() {
-        if (accountType != AccountType.BOT) {
-            throw new IllegalStateException("Cannot get owner id of non bot accounts");
-        }
         return ownerId;
     }
 
     @Override
     public long getClientId() {
-        if (accountType != AccountType.BOT) {
-            throw new IllegalStateException("Cannot get client id of non bot accounts");
-        }
         return clientId;
     }
 
@@ -1681,11 +1657,6 @@ public class DiscordApiImpl implements DiscordApi, DispatchQueueSelector {
     @Override
     public Collection<Channel> getChannels() {
         return entityCache.get().getChannelCache().getChannels();
-    }
-
-    @Override
-    public Collection<GroupChannel> getGroupChannels() {
-        return entityCache.get().getChannelCache().getChannelsWithTypes(ChannelType.GROUP_CHANNEL);
     }
 
     @Override

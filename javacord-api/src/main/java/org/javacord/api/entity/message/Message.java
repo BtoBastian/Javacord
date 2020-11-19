@@ -5,7 +5,6 @@ import org.javacord.api.Javacord;
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.UpdatableFromCache;
 import org.javacord.api.entity.channel.ChannelType;
-import org.javacord.api.entity.channel.GroupChannel;
 import org.javacord.api.entity.channel.PrivateChannel;
 import org.javacord.api.entity.channel.ServerChannel;
 import org.javacord.api.entity.channel.ServerTextChannel;
@@ -1007,16 +1006,6 @@ public interface Message extends DiscordEntity, Comparable<Message>, UpdatableFr
      */
     default Optional<PrivateChannel> getPrivateChannel() {
         return Optional.ofNullable(getChannel() instanceof PrivateChannel ? (PrivateChannel) getChannel() : null);
-    }
-
-    /**
-     * Gets the group channel of the message.
-     * Only present if the message was sent in a group channel.
-     *
-     * @return The group channel.
-     */
-    default Optional<GroupChannel> getGroupChannel() {
-        return Optional.ofNullable(getChannel() instanceof GroupChannel ? (GroupChannel) getChannel() : null);
     }
 
     /**
