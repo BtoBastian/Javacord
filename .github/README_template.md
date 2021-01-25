@@ -174,6 +174,7 @@ api.addListener(new MyListener());
 For commands, you have the option of using one of the many existing command frameworks such as
 * [**Command Framework**](https://github.com/Vampire/command-framework) by [@Vampire](https://github.com/Vampire)
 * [**Sdcf4j**](https://github.com/Bastian/sdcf4j) by [@Bastian](https://github.com/Bastian)
+* [**KCommando Framework**](https://github.com/MusaBrt/KCommando) by [@MusaBrt](https://github.com/MusaBrt)
 
 or even write your own!
 
