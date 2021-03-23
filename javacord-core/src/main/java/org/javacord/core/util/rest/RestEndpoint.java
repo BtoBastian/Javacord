@@ -20,6 +20,7 @@ public enum RestEndpoint {
     MESSAGES_BULK_DELETE("/channels/%s/messages/bulk-delete", 0),
     CHANNEL_TYPING("/channels/%s/typing", 0),
     CHANNEL_INVITE("/channels/%s/invites", 0),
+    FOLLOW_NEWS_CHANNEL("/channels/%s/followers", 0),
     USER("/users/%s"),
     USER_CHANNEL("/users/@me/channels"),
     CHANNEL("/channels/%s", 0),

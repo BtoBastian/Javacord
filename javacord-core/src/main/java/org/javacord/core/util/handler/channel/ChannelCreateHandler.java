@@ -45,6 +45,7 @@ public class ChannelCreateHandler extends PacketHandler {
         ChannelType type = ChannelType.fromId(packet.get("type").asInt());
         switch (type) {
             case SERVER_TEXT_CHANNEL:
+            case SERVER_NEWS_CHANNEL:
                 handleServerTextChannel(packet);
                 break;
             case PRIVATE_CHANNEL:
@@ -58,11 +59,6 @@ public class ChannelCreateHandler extends PacketHandler {
                 break;
             case CHANNEL_CATEGORY:
                 handleChannelCategory(packet);
-                break;
-            case SERVER_NEWS_CHANNEL:
-                logger.debug("Received CHANNEL_CREATE packet for a news channel. In this Javacord version it is "
-                        + "treated as a normal text channel!");
-                handleServerTextChannel(packet);
                 break;
             case SERVER_STORE_CHANNEL:
                 // TODO Handle store channels

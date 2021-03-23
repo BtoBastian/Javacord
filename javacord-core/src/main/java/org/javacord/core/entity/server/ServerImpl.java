@@ -19,6 +19,7 @@ import org.javacord.api.entity.auditlog.AuditLogEntry;
 import org.javacord.api.entity.channel.ChannelCategory;
 import org.javacord.api.entity.channel.ChannelType;
 import org.javacord.api.entity.channel.ServerChannel;
+import org.javacord.api.entity.channel.ServerNewsChannel;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerVoiceChannel;
 import org.javacord.api.entity.emoji.KnownCustomEmoji;
@@ -46,6 +47,7 @@ import org.javacord.core.entity.activity.ActivityImpl;
 import org.javacord.core.entity.auditlog.AuditLogImpl;
 import org.javacord.core.entity.channel.ChannelCategoryImpl;
 import org.javacord.core.entity.channel.ServerChannelImpl;
+import org.javacord.core.entity.channel.ServerNewsChannelImpl;
 import org.javacord.core.entity.channel.ServerTextChannelImpl;
 import org.javacord.core.entity.channel.ServerVoiceChannelImpl;
 import org.javacord.core.entity.permission.RoleImpl;
@@ -339,6 +341,7 @@ public class ServerImpl implements Server, Cleanupable, InternalServerAttachable
             for (JsonNode channel : data.get("channels")) {
                 switch (ChannelType.fromId(channel.get("type").asInt())) {
                     case SERVER_TEXT_CHANNEL:
+                    case SERVER_NEWS_CHANNEL:
                         getOrCreateServerTextChannel(channel);
                         break;
                     case SERVER_VOICE_CHANNEL:
@@ -346,12 +349,6 @@ public class ServerImpl implements Server, Cleanupable, InternalServerAttachable
                         break;
                     case CHANNEL_CATEGORY:
                         getOrCreateChannelCategory(channel);
-                        break;
-                    case SERVER_NEWS_CHANNEL:
-                        // TODO Handle server news channel differently
-                        logger.debug("{} has a news channel. In this Javacord version it is treated as a normal "
-                                + "text channel!", this);
-                        getOrCreateServerTextChannel(channel);
                         break;
                     case SERVER_STORE_CHANNEL:
                         // TODO Handle store channels
@@ -696,9 +693,10 @@ public class ServerImpl implements Server, Cleanupable, InternalServerAttachable
         long id = Long.parseLong(data.get("id").asText());
         ChannelType type = ChannelType.fromId(data.get("type").asInt());
         synchronized (this) {
-            // TODO Treat news channels differently
-            if (type == ChannelType.SERVER_TEXT_CHANNEL || type == ChannelType.SERVER_NEWS_CHANNEL) {
+            if (type == ChannelType.SERVER_TEXT_CHANNEL) {
                 return getTextChannelById(id).orElseGet(() -> new ServerTextChannelImpl(api, this, data));
+            } else if (type == ChannelType.SERVER_NEWS_CHANNEL) {
+                return getTextChannelById(id).orElseGet(() -> new ServerNewsChannelImpl(api, this, data));
             }
         }
         // Invalid channel type
@@ -1519,6 +1517,15 @@ public class ServerImpl implements Server, Cleanupable, InternalServerAttachable
                 .filter(channel -> channel instanceof ServerTextChannel)
                 .sorted(ServerChannelImpl.COMPARE_BY_RAW_POSITION)
                 .map(channel -> (ServerTextChannel) channel)
+                .collect(Collectors.toList()));
+    }
+
+    @Override
+    public List<ServerNewsChannel> getNewsChannels() {
+        return Collections.unmodifiableList(getUnorderedChannels().stream()
+                .filter(channel -> channel instanceof ServerNewsChannel)
+                .sorted(ServerChannelImpl.COMPARE_BY_RAW_POSITION)
+                .map(channel -> (ServerNewsChannel) channel)
                 .collect(Collectors.toList()));
     }
 

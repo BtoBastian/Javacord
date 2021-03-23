@@ -13,6 +13,7 @@ import org.javacord.api.entity.auditlog.AuditLogEntry;
 import org.javacord.api.entity.channel.ChannelCategory;
 import org.javacord.api.entity.channel.ChannelCategoryBuilder;
 import org.javacord.api.entity.channel.ServerChannel;
+import org.javacord.api.entity.channel.ServerNewsChannel;
 import org.javacord.api.entity.channel.ServerTextChannel;
 import org.javacord.api.entity.channel.ServerTextChannelBuilder;
 import org.javacord.api.entity.channel.ServerVoiceChannel;
@@ -2164,6 +2165,13 @@ public interface Server extends DiscordEntity, Nameable, UpdatableFromCache<Serv
     List<ServerTextChannel> getTextChannels();
 
     /**
+     * Gets a sorted list (by position) with all news channels of the server.
+     *
+     * @return A sorted list (by position) with all news channels of the server.
+     */
+    List<ServerNewsChannel> getNewsChannels();
+
+    /**
      * Gets a sorted list (by position) with all voice channels of the server.
      *
      * @return A sorted list (by position) with all voice channels of the server.
@@ -2324,6 +2332,60 @@ public interface Server extends DiscordEntity, Nameable, UpdatableFromCache<Serv
     default List<ServerTextChannel> getTextChannelsByNameIgnoreCase(String name) {
         return Collections.unmodifiableList(
                 getTextChannels().stream()
+                        .filter(channel -> channel.getName().equalsIgnoreCase(name))
+                        .collect(Collectors.toList()));
+    }
+
+    /**
+     * Gets a news channel by its id.
+     *
+     * @param id The id of the news channel.
+     * @return The news channel with the given id.
+     */
+    default Optional<ServerNewsChannel> getNewsChannelById(long id) {
+        return getChannelById(id)
+                .filter(channel -> channel instanceof ServerNewsChannel)
+                .map(channel -> (ServerNewsChannel) channel);
+    }
+
+    /**
+     * Gets a news channel by its id.
+     *
+     * @param id The id of the news channel.
+     * @return The news channel with the given id.
+     */
+    default Optional<ServerNewsChannel> getNewsChannelById(String id) {
+        try {
+            return getNewsChannelById(Long.parseLong(id));
+        } catch (NumberFormatException e) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Gets a sorted list (by position) with all news channels with the given name.
+     * This method is case sensitive!
+     *
+     * @param name The name of the news channels.
+     * @return A sorted list (by position) with all news channels with the given name.
+     */
+    default List<ServerNewsChannel> getNewsChannelsByName(String name) {
+        return Collections.unmodifiableList(
+                getNewsChannels().stream()
+                        .filter(channel -> channel.getName().equals(name))
+                        .collect(Collectors.toList()));
+    }
+
+    /**
+     * Gets a sorted list (by position) with all news channels with the given name.
+     * This method is case insensitive!
+     *
+     * @param name The name of the news channels.
+     * @return A sorted list (by position) with all news channels with the given name.
+     */
+    default List<ServerNewsChannel> getNewsChannelsByNameIgnoreCase(String name) {
+        return Collections.unmodifiableList(
+                getNewsChannels().stream()
                         .filter(channel -> channel.getName().equalsIgnoreCase(name))
                         .collect(Collectors.toList()));
     }

@@ -43,6 +43,7 @@ public class ChannelDeleteHandler extends PacketHandler {
         ChannelType type = ChannelType.fromId(packet.get("type").asInt());
         switch (type) {
             case SERVER_TEXT_CHANNEL:
+            case SERVER_NEWS_CHANNEL:
                 handleServerTextChannel(packet);
                 break;
             case PRIVATE_CHANNEL:
@@ -56,10 +57,6 @@ public class ChannelDeleteHandler extends PacketHandler {
                 break;
             case CHANNEL_CATEGORY:
                 handleCategory(packet);
-                break;
-            case SERVER_NEWS_CHANNEL:
-                // TODO Handle server news channel differently
-                handleServerTextChannel(packet);
                 break;
             case SERVER_STORE_CHANNEL:
                 // TODO Handle store channels
