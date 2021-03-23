@@ -3,8 +3,12 @@ package org.javacord.core.entity.activity;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.ApplicationInfo;
+import org.javacord.api.entity.team.Team;
 import org.javacord.api.entity.user.User;
+import org.javacord.core.DiscordApiImpl;
+import org.javacord.core.entity.team.TeamImpl;
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -22,6 +26,7 @@ public class ApplicationInfoImpl implements ApplicationInfo {
     private final long ownerId;
     private final String ownerName;
     private final String ownerDiscriminator;
+    private final Team team;
 
     /**
      * Creates a new application info object.
@@ -40,6 +45,7 @@ public class ApplicationInfoImpl implements ApplicationInfo {
         ownerId = data.get("owner").get("id").asLong();
         ownerName = data.get("owner").get("username").asText();
         ownerDiscriminator = data.get("owner").get("discriminator").asText();
+        team = data.hasNonNull("team") ? new TeamImpl((DiscordApiImpl) api, data.get("team")) : null;
     }
 
     @Override
@@ -85,5 +91,10 @@ public class ApplicationInfoImpl implements ApplicationInfo {
     @Override
     public CompletableFuture<User> getOwner() {
         return api.getUserById(getOwnerId());
+    }
+
+    @Override
+    public Optional<Team> getTeam() {
+        return Optional.ofNullable(team);
     }
 }

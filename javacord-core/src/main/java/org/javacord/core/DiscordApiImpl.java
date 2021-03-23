@@ -31,6 +31,7 @@ import org.javacord.api.entity.message.MessageSet;
 import org.javacord.api.entity.message.UncachedMessageUtil;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.server.invite.Invite;
+import org.javacord.api.entity.team.Team;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.entity.user.UserStatus;
 import org.javacord.api.entity.webhook.IncomingWebhook;
@@ -297,6 +298,11 @@ public class DiscordApiImpl implements DiscordApi, DispatchQueueSelector {
      * The id of the application's owner.
      */
     private volatile long ownerId = -1;
+
+    /**
+     * The team of the application.
+     */
+    private volatile Team team = null;
 
     /**
      * The time offset between the Discord time and our local time.
@@ -625,6 +631,7 @@ public class DiscordApiImpl implements DiscordApi, DispatchQueueSelector {
                                     } else {
                                         clientId = applicationInfo.getClientId();
                                         ownerId = applicationInfo.getOwnerId();
+                                        team = applicationInfo.getTeam().orElse(null);
                                     }
                                     ready.complete(this);
                                 });
@@ -1556,6 +1563,11 @@ public class DiscordApiImpl implements DiscordApi, DispatchQueueSelector {
     }
 
     @Override
+    public Optional<Team> getCachedTeam() {
+        return Optional.ofNullable(team);
+    }
+
+    @Override
     public long getClientId() {
         if (accountType != AccountType.BOT) {
             throw new IllegalStateException("Cannot get client id of non bot accounts");
@@ -1601,7 +1613,11 @@ public class DiscordApiImpl implements DiscordApi, DispatchQueueSelector {
     @Override
     public CompletableFuture<ApplicationInfo> getApplicationInfo() {
         return new RestRequest<ApplicationInfo>(this, RestMethod.GET, RestEndpoint.SELF_INFO)
-                .execute(result -> new ApplicationInfoImpl(this, result.getJsonBody()));
+                .execute(result -> {
+                    ApplicationInfo applicationInfo = new ApplicationInfoImpl(this, result.getJsonBody());
+                    this.team = applicationInfo.getTeam().orElse(null);
+                    return applicationInfo;
+                });
     }
 
     @Override
