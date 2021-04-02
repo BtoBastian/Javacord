@@ -4,13 +4,13 @@ import org.javacord.api.DiscordApi;
 import org.javacord.api.entity.channel.ServerChannel;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.emoji.Emoji;
+import org.javacord.api.entity.emoji.UnicodeEmoji;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.Reaction;
 import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.event.message.MessageEvent;
-import org.javacord.core.entity.emoji.UnicodeEmojiImpl;
 import org.javacord.core.event.EventImpl;
 
 import java.util.Arrays;
@@ -114,7 +114,7 @@ public abstract class MessageEventImpl extends EventImpl implements MessageEvent
     @Override
     public CompletableFuture<Void> addReactionsToMessage(String... unicodeEmojis) {
         return addReactionsToMessage(Arrays.stream(unicodeEmojis)
-                                             .map(UnicodeEmojiImpl::fromString)
+                                             .map(UnicodeEmoji::fromString)
                                              .toArray(Emoji[]::new));
     }
 
@@ -130,7 +130,7 @@ public abstract class MessageEventImpl extends EventImpl implements MessageEvent
 
     @Override
     public CompletableFuture<Void> removeReactionByEmojiFromMessage(User user, String unicodeEmoji) {
-        return removeReactionByEmojiFromMessage(user, UnicodeEmojiImpl.fromString(unicodeEmoji));
+        return removeReactionByEmojiFromMessage(user, UnicodeEmoji.fromString(unicodeEmoji));
     }
 
     @Override
@@ -145,7 +145,7 @@ public abstract class MessageEventImpl extends EventImpl implements MessageEvent
 
     @Override
     public CompletableFuture<Void> removeReactionByEmojiFromMessage(String unicodeEmoji) {
-        return removeReactionByEmojiFromMessage(UnicodeEmojiImpl.fromString(unicodeEmoji));
+        return removeReactionByEmojiFromMessage(UnicodeEmoji.fromString(unicodeEmoji));
     }
 
     @Override
@@ -159,7 +159,7 @@ public abstract class MessageEventImpl extends EventImpl implements MessageEvent
     public CompletableFuture<Void> removeReactionsByEmojiFromMessage(User user, String... unicodeEmojis) {
         return removeReactionsByEmojiFromMessage(
                 user, Arrays.stream(unicodeEmojis)
-                        .map(UnicodeEmojiImpl::fromString)
+                        .map(UnicodeEmoji::fromString)
                         .toArray(Emoji[]::new));
     }
 
@@ -174,7 +174,7 @@ public abstract class MessageEventImpl extends EventImpl implements MessageEvent
     @Override
     public CompletableFuture<Void> removeReactionsByEmojiFromMessage(String... unicodeEmojis) {
         return removeReactionsByEmojiFromMessage(Arrays.stream(unicodeEmojis)
-                                                         .map(UnicodeEmojiImpl::fromString)
+                                                         .map(UnicodeEmoji::fromString)
                                                          .toArray(Emoji[]::new));
     }
 
@@ -185,7 +185,7 @@ public abstract class MessageEventImpl extends EventImpl implements MessageEvent
 
     @Override
     public CompletableFuture<Void> removeOwnReactionByEmojiFromMessage(String unicodeEmoji) {
-        return removeOwnReactionByEmojiFromMessage(UnicodeEmojiImpl.fromString(unicodeEmoji));
+        return removeOwnReactionByEmojiFromMessage(UnicodeEmoji.fromString(unicodeEmoji));
     }
 
     @Override
@@ -196,7 +196,7 @@ public abstract class MessageEventImpl extends EventImpl implements MessageEvent
     @Override
     public CompletableFuture<Void> removeOwnReactionsByEmojiFromMessage(String... unicodeEmojis) {
         return removeOwnReactionsByEmojiFromMessage(Arrays.stream(unicodeEmojis)
-                                                            .map(UnicodeEmojiImpl::fromString)
+                                                            .map(UnicodeEmoji::fromString)
                                                             .toArray(Emoji[]::new));
     }
 

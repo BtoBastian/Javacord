@@ -6,8 +6,8 @@ import org.javacord.api.entity.activity.ActivityAssets;
 import org.javacord.api.entity.activity.ActivityParty;
 import org.javacord.api.entity.activity.ActivityType;
 import org.javacord.api.entity.emoji.Emoji;
+import org.javacord.api.entity.emoji.UnicodeEmoji;
 import org.javacord.core.DiscordApiImpl;
-import org.javacord.core.entity.emoji.UnicodeEmojiImpl;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -58,7 +58,7 @@ public class ActivityImpl implements Activity {
             if (emoji.has("id")) {
                 this.emoji = api.getKnownCustomEmojiOrCreateCustomEmoji(emoji);
             } else {
-                this.emoji = UnicodeEmojiImpl.fromString(emoji.get("name").asText());
+                this.emoji = UnicodeEmoji.fromString(emoji.get("name").asText());
             }
         } else {
             this.emoji = null;

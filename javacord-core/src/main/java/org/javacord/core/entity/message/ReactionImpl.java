@@ -3,10 +3,10 @@ package org.javacord.core.entity.message;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.emoji.Emoji;
+import org.javacord.api.entity.emoji.UnicodeEmoji;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.Reaction;
 import org.javacord.core.DiscordApiImpl;
-import org.javacord.core.entity.emoji.UnicodeEmojiImpl;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -48,7 +48,7 @@ public class ReactionImpl implements Reaction {
 
         JsonNode emojiJson = data.get("emoji");
         if (!emojiJson.has("id") || emojiJson.get("id").isNull()) {
-            emoji = UnicodeEmojiImpl.fromString(emojiJson.get("name").asText());
+            emoji = UnicodeEmoji.fromString(emojiJson.get("name").asText());
         } else {
             emoji = ((DiscordApiImpl) message.getApi()).getKnownCustomEmojiOrCreateCustomEmoji(emojiJson);
         }

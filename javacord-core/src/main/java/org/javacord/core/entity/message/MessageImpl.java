@@ -6,6 +6,7 @@ import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.channel.TextChannel;
 import org.javacord.api.entity.emoji.CustomEmoji;
 import org.javacord.api.entity.emoji.Emoji;
+import org.javacord.api.entity.emoji.UnicodeEmoji;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageActivity;
 import org.javacord.api.entity.message.MessageAttachment;
@@ -17,7 +18,6 @@ import org.javacord.api.entity.permission.Role;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.util.DiscordRegexPattern;
 import org.javacord.core.DiscordApiImpl;
-import org.javacord.core.entity.emoji.UnicodeEmojiImpl;
 import org.javacord.core.entity.message.embed.EmbedImpl;
 import org.javacord.core.entity.server.ServerImpl;
 import org.javacord.core.entity.user.MemberImpl;
@@ -455,40 +455,40 @@ public class MessageImpl implements Message, InternalMessageAttachableListenerMa
 
     @Override
     public CompletableFuture<Void> addReactions(String... unicodeEmojis) {
-        return addReactions(Arrays.stream(unicodeEmojis).map(UnicodeEmojiImpl::fromString).toArray(Emoji[]::new));
+        return addReactions(Arrays.stream(unicodeEmojis).map(UnicodeEmoji::fromString).toArray(Emoji[]::new));
     }
 
     @Override
     public CompletableFuture<Void> removeReactionByEmoji(User user, String unicodeEmoji) {
-        return removeReactionByEmoji(user, UnicodeEmojiImpl.fromString(unicodeEmoji));
+        return removeReactionByEmoji(user, UnicodeEmoji.fromString(unicodeEmoji));
     }
 
     @Override
     public CompletableFuture<Void> removeReactionByEmoji(String unicodeEmoji) {
-        return removeReactionByEmoji(UnicodeEmojiImpl.fromString(unicodeEmoji));
+        return removeReactionByEmoji(UnicodeEmoji.fromString(unicodeEmoji));
     }
 
     @Override
     public CompletableFuture<Void> removeReactionsByEmoji(User user, String... unicodeEmojis) {
         return removeReactionsByEmoji(user,
-                Arrays.stream(unicodeEmojis).map(UnicodeEmojiImpl::fromString).toArray(Emoji[]::new));
+                Arrays.stream(unicodeEmojis).map(UnicodeEmoji::fromString).toArray(Emoji[]::new));
     }
 
     @Override
     public CompletableFuture<Void> removeReactionsByEmoji(String... unicodeEmojis) {
         return removeReactionsByEmoji(
-                Arrays.stream(unicodeEmojis).map(UnicodeEmojiImpl::fromString).toArray(Emoji[]::new));
+                Arrays.stream(unicodeEmojis).map(UnicodeEmoji::fromString).toArray(Emoji[]::new));
     }
 
     @Override
     public CompletableFuture<Void> removeOwnReactionByEmoji(String unicodeEmoji) {
-        return removeOwnReactionByEmoji(UnicodeEmojiImpl.fromString(unicodeEmoji));
+        return removeOwnReactionByEmoji(UnicodeEmoji.fromString(unicodeEmoji));
     }
 
     @Override
     public CompletableFuture<Void> removeOwnReactionsByEmoji(String... unicodeEmojis) {
         return removeOwnReactionsByEmoji(
-                Arrays.stream(unicodeEmojis).map(UnicodeEmojiImpl::fromString).toArray(Emoji[]::new));
+                Arrays.stream(unicodeEmojis).map(UnicodeEmoji::fromString).toArray(Emoji[]::new));
     }
 
     @Override

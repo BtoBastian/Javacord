@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.logging.log4j.Logger;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.Javacord;
-import org.javacord.api.entity.DiscordEntity;
 import org.javacord.api.entity.Icon;
 import org.javacord.api.entity.emoji.CustomEmoji;
 import org.javacord.core.DiscordApiImpl;
@@ -111,9 +110,7 @@ public class CustomEmojiImpl implements CustomEmoji {
     @Override
     public boolean equals(Object o) {
         return (this == o)
-               || !((o == null)
-                    || (getClass() != o.getClass())
-                    || (getId() != ((DiscordEntity) o).getId()));
+               || ((o instanceof CustomEmoji) && equalsEmoji((CustomEmoji) o));
     }
 
     @Override
