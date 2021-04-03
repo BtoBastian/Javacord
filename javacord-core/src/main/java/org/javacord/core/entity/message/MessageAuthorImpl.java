@@ -7,18 +7,24 @@ import org.javacord.api.entity.Icon;
 import org.javacord.api.entity.message.Message;
 import org.javacord.api.entity.message.MessageAuthor;
 import org.javacord.api.entity.user.User;
+import org.javacord.api.entity.webhook.Webhook;
+import org.javacord.api.listener.message.MessageCreateListener;
+import org.javacord.api.util.event.ListenerManager;
+
 import org.javacord.core.DiscordApiImpl;
 import org.javacord.core.entity.server.ServerImpl;
 import org.javacord.core.entity.user.MemberImpl;
 import org.javacord.core.entity.user.UserImpl;
+import org.javacord.core.listener.message.InternalMessageAuthorAttachableListenerManager;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 /**
  * The implementation of {@link MessageAuthor}.
  */
-public class MessageAuthorImpl implements MessageAuthor {
+public class MessageAuthorImpl implements MessageAuthor, InternalMessageAuthorAttachableListenerManager {
 
     private final Message message;
 
@@ -64,6 +70,21 @@ public class MessageAuthorImpl implements MessageAuthor {
         }
 
         this.webhookId = webhookId;
+    }
+
+    @Override
+    public ListenerManager<MessageCreateListener> addMessageCreateListener(MessageCreateListener listener) {
+        return ((DiscordApiImpl) getApi()).addObjectListener(isUser() ? User.class : Webhook.class,
+                getId(),
+                MessageCreateListener.class,
+                listener);
+    }
+
+    @Override
+    public List<MessageCreateListener> getMessageCreateListeners() {
+        return ((DiscordApiImpl) getApi()).getObjectListeners(isUser() ? User.class : Webhook.class,
+                getId(),
+                MessageCreateListener.class);
     }
 
     @Override

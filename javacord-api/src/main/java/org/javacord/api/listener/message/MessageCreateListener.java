@@ -14,7 +14,7 @@ import org.javacord.api.listener.webhook.WebhookAttachableListener;
 @FunctionalInterface
 public interface MessageCreateListener extends ServerAttachableListener, UserAttachableListener,
         WebhookAttachableListener, TextChannelAttachableListener, GloballyAttachableListener,
-        ObjectAttachableListener {
+        ObjectAttachableListener, MessageAuthorAttachableListener {
 
     /**
      * This method is called every time a message is created.

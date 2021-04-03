@@ -10,8 +10,13 @@ import org.javacord.api.entity.channel.ServerVoiceChannel;
 import org.javacord.api.entity.server.Server;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.entity.webhook.Webhook;
+import org.javacord.api.listener.ObjectAttachableListener;
+import org.javacord.api.listener.message.MessageAuthorAttachableListenerManager;
+import org.javacord.api.listener.message.MessageCreateListener;
+import org.javacord.api.util.event.ListenerManager;
 
 import java.awt.Color;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -20,7 +25,8 @@ import java.util.concurrent.CompletableFuture;
  *
  * <p>Do not confuse a webhook with a bot account which is also considered to be a user.
  */
-public interface MessageAuthor extends DiscordEntity, Nameable {
+public interface MessageAuthor extends DiscordEntity, Nameable, ObjectAttachableListener,
+        MessageAuthorAttachableListenerManager {
 
     /**
      * Gets the message.
@@ -135,6 +141,21 @@ public interface MessageAuthor extends DiscordEntity, Nameable {
                 .flatMap(server -> asUser().map(server::canCreateChannels))
                 .orElse(false);
     }
+
+    /**
+     * Adds a {@code MessageCreateListener}.
+     *
+     * @param listener The listener to add.
+     * @return The manager of the listener.
+     */
+    ListenerManager<MessageCreateListener> addMessageCreateListener(MessageCreateListener listener);
+
+    /**
+     * Gets a list with all registered {@code MessageCreateListener}s.
+     *
+     * @return A list with all registered {@code MessageCreateListener}s.
+     */
+    List<MessageCreateListener> getMessageCreateListeners();
 
     /**
      * Checks if the author can view the audit log of the server where the message was sent.
