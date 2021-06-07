@@ -55,8 +55,15 @@ public class GuildMemberUpdateHandler extends PacketHandler {
     public void handle(JsonNode packet) {
         api.getPossiblyUnreadyServerById(packet.get("guild_id").asLong()).map(server -> (ServerImpl) server)
                 .ifPresent(server -> {
-                    MemberImpl newMember = new MemberImpl(api, server, packet, null);
-                    Member oldMember = server.getRealMemberById(newMember.getId()).orElse(null);
+                    long userId = packet.get("user").get("id").asLong();
+                    boolean selfMuted = server.isSelfMuted(userId);
+                    boolean selfDeafened = server.isSelfDeafened(userId);
+                    // GUILD_MEMBER_UPDATE doesn't contain self voice states, so we either pass the old or set to false.
+                    // https://discord.com/developers/docs/topics/gateway#guild-member-update
+                    MemberImpl newMember = new MemberImpl(api, server, packet, null)
+                            .setSelfMuted(selfMuted)
+                            .setSelfDeafened(selfDeafened);
+                    Member oldMember = server.getRealMemberById(userId).orElse(null);
 
                     api.addMemberToCacheOrReplaceExisting(newMember);
 
@@ -127,7 +134,7 @@ public class GuildMemberUpdateHandler extends PacketHandler {
                         );
                     }
 
-                    // Update base user as well; GUILD_MEMBER_UDPATE is fired for user changes
+                    // Update base user as well; GUILD_MEMBER_UPDATE is fired for user changes
                     // to allow disabling presences, see
                     // https://github.com/discord/discord-api-docs/pull/1307#issuecomment-581561519
                     UserImpl oldUser = api.getCachedUserById(newMember.getId())

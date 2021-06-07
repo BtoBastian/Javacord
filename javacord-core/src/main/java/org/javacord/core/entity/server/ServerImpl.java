@@ -81,7 +81,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
@@ -201,16 +200,6 @@ public class ServerImpl implements Server, Cleanupable, InternalServerAttachable
      * A map with all roles of the server.
      */
     private final ConcurrentHashMap<Long, Role> roles = new ConcurrentHashMap<>();
-
-    /**
-     * A set with all members that are muted.
-     */
-    private final Set<Long> muted = new ConcurrentSkipListSet<>();
-
-    /**
-     * A set with all members that are deafened.
-     */
-    private final Set<Long> deafened = new ConcurrentSkipListSet<>();
 
     /**
      * A list with all custom emojis from this server.
@@ -753,8 +742,6 @@ public class ServerImpl implements Server, Cleanupable, InternalServerAttachable
      * @param userId The id of the user to remove.
      */
     public void removeMember(long userId) {
-        muted.remove(userId);
-        deafened.remove(userId);
         api.removeMemberFromCache(userId, getId());
     }
 
@@ -790,34 +777,6 @@ public class ServerImpl implements Server, Cleanupable, InternalServerAttachable
      */
     public void incrementMemberCount() {
         memberCount.incrementAndGet();
-    }
-
-    /**
-     * Sets the muted state of the user with the given id.
-     *
-     * @param userId The id of the user.
-     * @param muted  Whether the user with the given id is muted or not.
-     */
-    public void setMuted(long userId, boolean muted) {
-        if (muted) {
-            this.muted.add(userId);
-        } else {
-            this.muted.remove(userId);
-        }
-    }
-
-    /**
-     * Sets the deafened state of the user with the given id.
-     *
-     * @param userId   The id of the user.
-     * @param deafened Whether the user with the given id is deafened or not.
-     */
-    public void setDeafened(long userId, boolean deafened) {
-        if (deafened) {
-            this.deafened.add(userId);
-        } else {
-            this.deafened.remove(userId);
-        }
     }
 
     /**
@@ -1101,12 +1060,16 @@ public class ServerImpl implements Server, Cleanupable, InternalServerAttachable
 
     @Override
     public boolean isMuted(long userId) {
-        return muted.contains(userId);
+        return getRealMemberById(userId)
+                .map(Member::isMuted)
+                .orElse(false);
     }
 
     @Override
     public boolean isDeafened(long userId) {
-        return deafened.contains(userId);
+        return getRealMemberById(userId)
+                .map(Member::isDeafened)
+                .orElse(false);
     }
 
     @Override
