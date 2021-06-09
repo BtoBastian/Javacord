@@ -9,16 +9,11 @@ subprojects {
 
         testRuntimeOnly 'org.apache.logging.log4j:log4j-core:2.11.0'
         testRuntimeOnly 'net.bytebuddy:byte-buddy:1.8.17'
-        testRuntimeOnly 'org.objenesis:objenesis'
+        testRuntimeOnly 'org.objenesis:objenesis:3.2'
     }
 
     jacoco {
         toolVersion '0.8.2'
-    }
-
-    // we don't need aggregation from multiple runs and it prevents caching of the task
-    tasks.withType(Test) {
-        jacoco.append false
     }
 
     test.finalizedBy jacocoTestReport

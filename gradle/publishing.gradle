@@ -115,8 +115,6 @@ allprojects {
 }
 
 apply plugin: NexusStagingPlugin
-// remove superfluous tasks from NexusStagingPlugin
-tasks.removeAll([promoteRepository, closeAndPromoteRepository, getStagingProfile])
 
 nexusStaging {
     stagingProfileId sonatypeStagingProfileId

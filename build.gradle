@@ -7,6 +7,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '2.0.4' apply false
     id 'net.researchgate.release' version '2.7.0' apply false
     id 'org.ajoberstar.grgit' version '2.3.0' apply false
+    id 'biz.aQute.bnd.builder' version '5.3.0' // For OSGi
 }
 
 if (project.hasProperty('teamcity')) {
