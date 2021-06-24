@@ -8,28 +8,29 @@ import org.javacord.core.entity.user.Member;
  */
 public class UserChangeSelfDeafenedEventImpl extends ServerUserEventImpl implements UserChangeSelfDeafenedEvent {
 
-    private final Member newMember;
-    private final Member oldMember;
+    private final boolean newSelfDeafened;
+    private final boolean oldSelfDeafened;
 
     /**
      * Creates a new user change self deafened event.
      *
-     * @param newMember The new member.
-     * @param oldMember The old member.
+     * @param member The member.
+     * @param newSelfDeafened The new self deafened status.
+     * @param oldSelfDeafened The old self deafened status.
      */
-    public UserChangeSelfDeafenedEventImpl(Member newMember, Member oldMember) {
-        super(newMember.getUser(), newMember.getServer());
-        this.newMember = newMember;
-        this.oldMember = oldMember;
+    public UserChangeSelfDeafenedEventImpl(Member member, boolean newSelfDeafened, boolean oldSelfDeafened) {
+        super(member.getUser(), member.getServer());
+        this.newSelfDeafened = newSelfDeafened;
+        this.oldSelfDeafened = oldSelfDeafened;
     }
 
     @Override
     public boolean isNewSelfDeafened() {
-        return newMember.isSelfDeafened();
+        return newSelfDeafened;
     }
 
     @Override
     public boolean isOldSelfDeafened() {
-        return oldMember.isSelfDeafened();
+        return oldSelfDeafened;
     }
 }

@@ -192,7 +192,11 @@ public interface Server extends DiscordEntity, Nameable, UpdatableFromCache<Serv
      * @param userId The id of the user to check.
      * @return Whether the user with the given id is self-muted.
      */
-    boolean isSelfMuted(long userId);
+    default boolean isSelfMuted(long userId) {
+        return getConnectedVoiceChannel(userId)
+                .map(voiceChannel -> voiceChannel.isSelfMuted(userId))
+                .orElse(false);
+    }
 
     /**
      * Gets the self-muted state of the given user.
@@ -219,7 +223,11 @@ public interface Server extends DiscordEntity, Nameable, UpdatableFromCache<Serv
      * @param userId The id of the user to check.
      * @return Whether the user with the given id is self-deafened.
      */
-    boolean isSelfDeafened(long userId);
+    default boolean isSelfDeafened(long userId) {
+        return getConnectedVoiceChannel(userId)
+                .map(voiceChannel -> voiceChannel.isSelfDeafened(userId))
+                .orElse(false);
+    }
 
     /**
      * Gets the self-deafened state of the given user.

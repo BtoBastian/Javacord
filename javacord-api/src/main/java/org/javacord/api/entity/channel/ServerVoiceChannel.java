@@ -74,6 +74,70 @@ public interface ServerVoiceChannel extends ServerChannel, VoiceChannel, Categor
     }
 
     /**
+     * Gets the ids of the users that are self muted in this server voice channel.
+     *
+     * @return The ids of the users that are self muted in this server voice channel.
+     */
+    Collection<Long> getSelfMutedUserIds();
+
+    /**
+     * Gets the users that are self muted in this server voice channel.
+     *
+     * @return The users that are self muted in this server voice channel.
+     */
+    Collection<User> getSelfMutedUsers();
+
+    /**
+     * Checks whether the user with the given id is self muted in this channel.
+     *
+     * @param userId The id of the user to check.
+     * @return Whether the user with the given id is self muted in this channel or not.
+     */
+    boolean isSelfMuted(long userId);
+
+    /**
+     * Checks whether the given user is self muted in this channel.
+     *
+     * @param user The user to check.
+     * @return Whether the given user is self muted in this channel or not.
+     */
+    default boolean isSelfMuted(User user) {
+        return isSelfMuted(user.getId());
+    }
+
+    /**
+     * Gets the ids of the users that are self deafened in this server voice channel.
+     *
+     * @return The ids of the users that are self deafened in this server voice channel.
+     */
+    Collection<Long> getSelfDeafenedUserIds();
+
+    /**
+     * Gets the users that are self deafened in this server voice channel.
+     *
+     * @return The users that are self deafened in this server voice channel.
+     */
+    Collection<User> getSelfDeafenedUsers();
+
+    /**
+     * Checks whether the user with the given id is self deafened in this channel.
+     *
+     * @param userId The id of the user to check.
+     * @return Whether the user with the given id is self deafened in this channel or not.
+     */
+    boolean isSelfDeafened(long userId);
+
+    /**
+     * Checks whether the given user is self deafened in this channel.
+     *
+     * @param user The user to check.
+     * @return Whether the given user is self deafened in this channel or not.
+     */
+    default boolean isSelfDeafened(User user) {
+        return isSelfDeafened(user.getId());
+    }
+
+    /**
      * Creates an updater for this channel.
      *
      * @return An updater for this channel.

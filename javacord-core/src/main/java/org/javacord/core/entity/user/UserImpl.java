@@ -271,24 +271,6 @@ public class UserImpl implements User, InternalUserAttachableListenerManager {
     }
 
     @Override
-    public boolean isSelfMuted(Server server) {
-        if (api.hasUserCacheEnabled() || member == null || member.getServer().getId() != server.getId()) {
-            return server.isSelfMuted(getId());
-        } else {
-            return member.isSelfMuted();
-        }
-    }
-
-    @Override
-    public boolean isSelfDeafened(Server server) {
-        if (api.hasUserCacheEnabled() || member == null || member.getServer().getId() != server.getId()) {
-            return server.isSelfDeafened(getId());
-        } else {
-            return member.isSelfDeafened();
-        }
-    }
-
-    @Override
     public Optional<Instant> getJoinedAtTimestamp(Server server) {
         if (api.hasUserCacheEnabled() || member == null || member.getServer().getId() != server.getId()) {
             return server.getJoinedAtTimestamp(this);

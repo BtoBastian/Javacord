@@ -31,8 +31,6 @@ public final class MemberImpl implements Member {
     private final List<Long> roleIds;
     private final String joinedAt;
     private final String serverBoostingSince;
-    private final boolean selfDeafened;
-    private final boolean selfMuted;
 
     /**
      * Creates a new immutable member instance.
@@ -71,21 +69,10 @@ public final class MemberImpl implements Member {
         } else {
             serverBoostingSince = null;
         }
-
-        if (data.hasNonNull("deaf")) {
-            selfDeafened = data.get("deaf").asBoolean();
-        } else {
-            selfDeafened = false;
-        }
-        if (data.hasNonNull("mute")) {
-            selfMuted = data.get("mute").asBoolean();
-        } else {
-            selfMuted = false;
-        }
     }
 
     private MemberImpl(DiscordApiImpl api, ServerImpl server, UserImpl user, String nickname, List<Long> roleIds,
-                       String joinedAt, String serverBoostingSince, boolean selfDeafened, boolean selfMuted) {
+                       String joinedAt, String serverBoostingSince) {
         this.api = api;
         this.server = server;
         this.user = user;
@@ -93,8 +80,6 @@ public final class MemberImpl implements Member {
         this.roleIds = roleIds;
         this.joinedAt = joinedAt;
         this.serverBoostingSince = serverBoostingSince;
-        this.selfDeafened = selfDeafened;
-        this.selfMuted = selfMuted;
     }
 
     /**
@@ -105,7 +90,7 @@ public final class MemberImpl implements Member {
      */
     public MemberImpl setUser(UserImpl user) {
         return new MemberImpl(
-                api, server, user, nickname, roleIds, joinedAt, serverBoostingSince, selfDeafened, selfMuted);
+                api, server, user, nickname, roleIds, joinedAt, serverBoostingSince);
     }
 
     /**
@@ -116,7 +101,7 @@ public final class MemberImpl implements Member {
      */
     public MemberImpl setPartialUser(JsonNode partialUserJson) {
         return new MemberImpl(api, server, user.replacePartialUserData(partialUserJson), nickname, roleIds, joinedAt,
-                serverBoostingSince, selfDeafened, selfMuted);
+                serverBoostingSince);
     }
 
     /**
@@ -128,7 +113,7 @@ public final class MemberImpl implements Member {
     public MemberImpl setRoleIds(List<Long> roleIds) {
         roleIds.add(server.getEveryoneRole().getId());
         return new MemberImpl(
-                api, server, user, nickname, roleIds, joinedAt, serverBoostingSince, selfDeafened, selfMuted);
+                api, server, user, nickname, roleIds, joinedAt, serverBoostingSince);
     }
 
     /**
@@ -148,7 +133,7 @@ public final class MemberImpl implements Member {
      */
     public MemberImpl setNickname(String nickname) {
         return new MemberImpl(
-                api, server, user, nickname, roleIds, joinedAt, serverBoostingSince, selfDeafened, selfMuted);
+                api, server, user, nickname, roleIds, joinedAt, serverBoostingSince);
     }
 
     /**
@@ -159,7 +144,7 @@ public final class MemberImpl implements Member {
      */
     public MemberImpl setServerBoostingSince(String serverBoostingSince) {
         return new MemberImpl(
-                api, server, user, nickname, roleIds, joinedAt, serverBoostingSince, selfDeafened, selfMuted);
+                api, server, user, nickname, roleIds, joinedAt, serverBoostingSince);
     }
 
     /**
@@ -229,16 +214,6 @@ public final class MemberImpl implements Member {
         return Optional.ofNullable(serverBoostingSince)
                 .map(OffsetDateTime::parse)
                 .map(OffsetDateTime::toInstant);
-    }
-
-    @Override
-    public boolean isSelfMuted() {
-        return selfMuted;
-    }
-
-    @Override
-    public boolean isSelfDeafened() {
-        return selfDeafened;
     }
 
     @Override

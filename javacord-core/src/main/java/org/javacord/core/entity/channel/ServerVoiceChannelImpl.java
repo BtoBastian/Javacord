@@ -46,6 +46,16 @@ public class ServerVoiceChannelImpl extends ServerChannelImpl
     private final Collection<Long> connectedUsers = new ArrayList<>();
 
     /**
+     * The ids of the self muted users of this server voice channel.
+     */
+    private final Collection<Long> selfMuted = new ArrayList<>();
+
+    /**
+     * The ids of the self deafened users of this server voice channel.
+     */
+    private final Collection<Long> selfDeafened = new ArrayList<>();
+
+    /**
      * Creates a new server voice channel object.
      *
      * @param api The discord api instance.
@@ -104,6 +114,34 @@ public class ServerVoiceChannelImpl extends ServerChannelImpl
         connectedUsers.remove(userId);
     }
 
+    /**
+     * Sets the self muted state of the user with the given id.
+     *
+     * @param userId    The id of the user.
+     * @param selfMuted Whether the user with the given id is self muted or not.
+     */
+    public void setSelfMuted(long userId, boolean selfMuted) {
+        if (selfMuted) {
+            this.selfMuted.add(userId);
+        } else {
+            this.selfMuted.remove(userId);
+        }
+    }
+
+    /**
+     * Sets the self deafened state of the user with the given id.
+     *
+     * @param userId       The id of the user.
+     * @param selfDeafened Whether the user with the given id is self deafened or not.
+     */
+    public void setSelfDeafened(long userId, boolean selfDeafened) {
+        if (selfDeafened) {
+            this.selfDeafened.add(userId);
+        } else {
+            this.selfDeafened.remove(userId);
+        }
+    }
+
     @Override
     public Optional<ChannelCategory> getCategory() {
         return getServer().getChannelCategoryById(parentId);
@@ -154,6 +192,44 @@ public class ServerVoiceChannelImpl extends ServerChannelImpl
     @Override
     public boolean isConnected(long userId) {
         return connectedUsers.contains(userId);
+    }
+
+    @Override
+    public Collection<Long> getSelfMutedUserIds() {
+        return Collections.unmodifiableCollection(selfMuted);
+    }
+
+    @Override
+    public Collection<User> getSelfMutedUsers() {
+        return Collections.unmodifiableCollection(
+                selfMuted.stream()
+                        .map(getApi()::getCachedUserById)
+                        .map(optionalUser -> optionalUser.orElseThrow(AssertionError::new))
+                        .collect(Collectors.toList()));
+    }
+
+    @Override
+    public boolean isSelfMuted(long userId) {
+        return selfMuted.contains(userId);
+    }
+
+    @Override
+    public Collection<Long> getSelfDeafenedUserIds() {
+        return Collections.unmodifiableCollection(selfDeafened);
+    }
+
+    @Override
+    public Collection<User> getSelfDeafenedUsers() {
+        return Collections.unmodifiableCollection(
+                selfDeafened.stream()
+                        .map(getApi()::getCachedUserById)
+                        .map(optionalUser -> optionalUser.orElseThrow(AssertionError::new))
+                        .collect(Collectors.toList()));
+    }
+
+    @Override
+    public boolean isSelfDeafened(long userId) {
+        return selfDeafened.contains(userId);
     }
 
     @Override

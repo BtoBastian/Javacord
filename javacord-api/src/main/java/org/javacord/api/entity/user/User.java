@@ -322,7 +322,11 @@ public interface User extends DiscordEntity, Messageable, Nameable, Mentionable,
      * @param server The server to check.
      * @return Whether the user is self-muted in the given server.
      */
-    boolean isSelfMuted(Server server);
+    default boolean isSelfMuted(Server server) {
+        return server.getConnectedVoiceChannel(getId())
+                .map(vc -> vc.isSelfMuted(getId()))
+                .orElse(false);
+    }
 
     /**
      * Gets the self-deafened state of the user in the given server.
@@ -330,7 +334,12 @@ public interface User extends DiscordEntity, Messageable, Nameable, Mentionable,
      * @param server The server to check.
      * @return Whether the user is self-deafened in the given server.
      */
-    boolean isSelfDeafened(Server server);
+    default boolean isSelfDeafened(Server server) {
+        return server.getConnectedVoiceChannel(getId())
+                .map(vc -> vc.isSelfDeafened(getId()))
+                .orElse(false);
+    }
+
 
     /**
      * Mutes this user on the given server.

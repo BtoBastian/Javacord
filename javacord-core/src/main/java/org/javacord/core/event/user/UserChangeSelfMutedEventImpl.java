@@ -8,28 +8,29 @@ import org.javacord.core.entity.user.Member;
  */
 public class UserChangeSelfMutedEventImpl extends ServerUserEventImpl implements UserChangeSelfMutedEvent {
 
-    private final Member newMember;
-    private final Member oldMember;
+    private final boolean newSelfMuted;
+    private final boolean oldSelfMuted;
 
     /**
      * Creates a new user change self muted event.
      *
-     * @param newMember The new member.
-     * @param oldMember The old member.
+     * @param member The member.
+     * @param newSelfMuted The new self muted status.
+     * @param oldSelfMuted The old self muted status.
      */
-    public UserChangeSelfMutedEventImpl(Member newMember, Member oldMember) {
-        super(newMember.getUser(), newMember.getServer());
-        this.newMember = newMember;
-        this.oldMember = oldMember;
+    public UserChangeSelfMutedEventImpl(Member member, boolean newSelfMuted, boolean oldSelfMuted) {
+        super(member.getUser(), member.getServer());
+        this.newSelfMuted = newSelfMuted;
+        this.oldSelfMuted = oldSelfMuted;
     }
 
     @Override
     public boolean isNewSelfMuted() {
-        return newMember.isSelfMuted();
+        return newSelfMuted;
     }
 
     @Override
     public boolean isOldSelfMuted() {
-        return oldMember.isSelfMuted();
+        return oldSelfMuted;
     }
 }

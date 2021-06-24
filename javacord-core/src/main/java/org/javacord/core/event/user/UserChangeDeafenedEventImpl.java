@@ -25,12 +25,11 @@ public class UserChangeDeafenedEventImpl extends ServerUserEventImpl implements 
 
     @Override
     public boolean isNewDeafened() {
-        // TODO This is wrong.
-        return newMember.isSelfDeafened();
+        return newMember.getServer().isDeafened(newMember.getUser());
     }
 
     @Override
     public boolean isOldDeafened() {
-        return oldMember.isSelfDeafened();
+        return !isNewDeafened();
     }
 }

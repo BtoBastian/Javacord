@@ -122,12 +122,16 @@ public class VoiceStateUpdateHandler extends PacketHandler {
                     if (!newChannel.equals(oldChannel)) {
                         oldChannel.ifPresent(channel -> {
                             channel.removeConnectedUser(userId);
+                            channel.setSelfMuted(userId, false);
+                            channel.setSelfDeafened(userId, false);
                             dispatchServerVoiceChannelMemberLeaveEvent(
                                     member, newChannel.orElse(null), channel, server);
                         });
 
                         newChannel.ifPresent(channel -> {
                             channel.addConnectedUser(userId);
+                            channel.setSelfMuted(userId, packet.get("self_mute").asBoolean());
+                            channel.setSelfDeafened(userId, packet.get("self_deaf").asBoolean());
                             dispatchServerVoiceChannelMemberJoinEvent(member, channel, oldChannel.orElse(null), server);
                         });
                     }
@@ -141,17 +145,20 @@ public class VoiceStateUpdateHandler extends PacketHandler {
 
                     boolean newSelfMuted = packet.get("self_mute").asBoolean();
                     boolean oldSelfMuted = server.isSelfMuted(userId);
-                    if (newSelfMuted != oldSelfMuted) {
-                        UserChangeSelfMutedEventImpl event = new UserChangeSelfMutedEventImpl(newMember, oldMember);
+                    if (newSelfMuted != oldSelfMuted && newChannel.equals(oldChannel)) {
+                        newChannel.ifPresent(channel -> channel.setSelfMuted(userId, newSelfMuted));
+                        UserChangeSelfMutedEventImpl event = new UserChangeSelfMutedEventImpl(
+                                member, newSelfMuted, oldSelfMuted);
                         api.getEventDispatcher()
                                 .dispatchUserChangeSelfMutedEvent(server, server, newMember.getUser(), event);
                     }
 
                     boolean newSelfDeafened = packet.get("self_deaf").asBoolean();
                     boolean oldSelfDeafened = server.isSelfDeafened(userId);
-                    if (newSelfDeafened != oldSelfDeafened) {
+                    if (newSelfDeafened != oldSelfDeafened && newChannel.equals(oldChannel)) {
+                        newChannel.ifPresent(channel -> channel.setSelfDeafened(userId, newSelfDeafened));
                         UserChangeSelfDeafenedEventImpl event = new UserChangeSelfDeafenedEventImpl(
-                                newMember, oldMember);
+                                member, newSelfDeafened, oldSelfDeafened);
                         api.getEventDispatcher()
                                 .dispatchUserChangeSelfDeafenedEvent(server, server, newMember.getUser(), event);
                     }

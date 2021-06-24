@@ -394,7 +394,10 @@ public class ServerImpl implements Server, Cleanupable, InternalServerAttachable
                 ServerVoiceChannelImpl channel =
                         (ServerVoiceChannelImpl) getVoiceChannelById(voiceStateJson.get("channel_id").asLong())
                                 .orElseThrow(AssertionError::new);
-                channel.addConnectedUser(voiceStateJson.get("user_id").asLong());
+                long userId = voiceStateJson.get("user_id").asLong();
+                channel.addConnectedUser(userId);
+                channel.setSelfMuted(userId, voiceStateJson.get("self_mute").asBoolean());
+                channel.setSelfDeafened(userId, voiceStateJson.get("self_deaf").asBoolean());
             }
         }
 
@@ -1105,20 +1108,6 @@ public class ServerImpl implements Server, Cleanupable, InternalServerAttachable
     public Optional<String> getNickname(User user) {
         return getRealMemberById(user.getId())
                 .flatMap(Member::getNickname);
-    }
-
-    @Override
-    public boolean isSelfMuted(long userId) {
-        return getRealMemberById(userId)
-                .map(Member::isSelfMuted)
-                .orElse(false);
-    }
-
-    @Override
-    public boolean isSelfDeafened(long userId) {
-        return getRealMemberById(userId)
-                .map(Member::isSelfDeafened)
-                .orElse(false);
     }
 
     @Override
