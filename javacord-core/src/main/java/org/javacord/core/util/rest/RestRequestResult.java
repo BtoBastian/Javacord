@@ -53,7 +53,7 @@ public class RestRequestResult {
                 logger.debug("Failed to parse json response", e);
                 jsonBody = null;
             }
-            this.jsonBody = jsonBody == null ? NullNode.getInstance() : jsonBody;
+            this.jsonBody = jsonBody == null || jsonBody.isEmpty() ? NullNode.getInstance() : jsonBody;
         }
     }
 

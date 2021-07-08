@@ -26,7 +26,7 @@ project(':javacord-core') {
         implementation 'com.squareup.okhttp3:logging-interceptor:3.9.1'
 
         // the JSON-lib because Discord returns in JSON format
-        implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.3'
+        implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.3'
 
         // the web socket
         implementation 'com.neovisionaries:nv-websocket-client:2.6'
