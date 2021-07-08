@@ -77,14 +77,18 @@ public interface MessageAttachment extends DiscordEntity {
      *
      * @return The attachment as an input stream.
      * @throws IOException If an IO error occurs.
+     * @deprecated Use {@link MessageAttachment#asInputStream()} instead.
      */
+    @Deprecated
     InputStream downloadAsInputStream() throws IOException;
 
     /**
      * Gets the attachment as a byte array.
      *
      * @return The attachment as a byte array.
+     * @deprecated Use {@link MessageAttachment#asByteArray()} instead.
      */
+    @Deprecated
     CompletableFuture<byte[]> downloadAsByteArray();
 
     /**
@@ -92,8 +96,33 @@ public interface MessageAttachment extends DiscordEntity {
      *
      * @return The attachment as an image. Only present, if the attachment is an image.
      * @throws IllegalStateException If the attachment is not an image.
+     * @deprecated Use {@link MessageAttachment#asImage()} instead.
      */
+    @Deprecated
     CompletableFuture<BufferedImage> downloadAsImage();
+
+    /**
+     * Downloads the attachment as an input stream.
+     *
+     * @return The attachment as an input stream.
+     * @throws IOException If an IO error occurs.
+     */
+    InputStream asInputStream() throws IOException;
+
+    /**
+     * Downloads the attachment as a byte array.
+     *
+     * @return The attachment as a byte array.
+     */
+    CompletableFuture<byte[]> asByteArray();
+
+    /**
+     * Downloads the attachment as an image.
+     *
+     * @return The attachment as an image. Only present, if the attachment is an image.
+     * @throws IllegalStateException If the attachment is not an image.
+     */
+    CompletableFuture<BufferedImage> asImage();
 
     /**
      * Checks whether the attachment is marked as a spoiler.

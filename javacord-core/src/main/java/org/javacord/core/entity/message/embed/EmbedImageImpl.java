@@ -92,4 +92,19 @@ public class EmbedImageImpl implements EmbedImage {
         return new FileContainer(getUrl()).asInputStream(api);
     }
 
+    @Override
+    public CompletableFuture<BufferedImage> asBufferedImage(DiscordApi api) {
+        return new FileContainer(getUrl()).asBufferedImage(api);
+    }
+
+    @Override
+    public CompletableFuture<byte[]> asByteArray(DiscordApi api) {
+        return new FileContainer(getUrl()).asByteArray(api);
+    }
+
+    @Override
+    public InputStream asInputStream(DiscordApi api) throws IOException {
+        return new FileContainer(getUrl()).asInputStream(api);
+    }
+
 }

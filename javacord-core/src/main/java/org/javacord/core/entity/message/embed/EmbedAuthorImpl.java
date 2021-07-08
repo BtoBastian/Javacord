@@ -106,4 +106,23 @@ public class EmbedAuthorImpl implements EmbedAuthor {
         return Optional.of(new FileContainer(iconUrl).asInputStream(api));
     }
 
+    @Override
+    public Optional<CompletableFuture<BufferedImage>> iconAsBufferedImage(DiscordApi api) {
+        return getIconUrl().map(url -> new FileContainer(url).asBufferedImage(api));
+    }
+
+    @Override
+    public Optional<CompletableFuture<byte[]>> iconAsByteArray(DiscordApi api) {
+        return getIconUrl().map(url -> new FileContainer(url).asByteArray(api));
+    }
+
+    @Override
+    public Optional<InputStream> iconAsInputStream(DiscordApi api) throws IOException {
+        URL iconUrl = getIconUrl().orElse(null);
+        if (iconUrl == null) {
+            return Optional.empty();
+        }
+        return Optional.of(new FileContainer(iconUrl).asInputStream(api));
+    }
+
 }

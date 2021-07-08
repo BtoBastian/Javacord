@@ -156,6 +156,21 @@ public class MessageAttachmentImpl implements MessageAttachment {
     }
 
     @Override
+    public InputStream asInputStream() throws IOException {
+        return new FileContainer(getUrl()).asInputStream(getApi());
+    }
+
+    @Override
+    public CompletableFuture<byte[]> asByteArray() {
+        return new FileContainer(getUrl()).asByteArray(getApi());
+    }
+
+    @Override
+    public CompletableFuture<BufferedImage> asImage() {
+        return new FileContainer(getUrl()).asBufferedImage(getApi());
+    }
+
+    @Override
     public boolean equals(Object o) {
         return (this == o)
                || !((o == null)

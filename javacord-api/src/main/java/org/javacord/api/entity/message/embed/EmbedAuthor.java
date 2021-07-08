@@ -41,7 +41,9 @@ public interface EmbedAuthor extends Nameable {
      *
      * @param api The discord api instance used to download the author icon.
      * @return The thumbnail as a {@code BufferedImage}.
+     * @deprecated Use {@link EmbedAuthor#iconAsBufferedImage(DiscordApi)} instead.
      */
+    @Deprecated
     Optional<CompletableFuture<BufferedImage>> downloadIconAsBufferedImage(DiscordApi api);
 
     /**
@@ -49,7 +51,9 @@ public interface EmbedAuthor extends Nameable {
      *
      * @param api The discord api instance used to download the author icon.
      * @return The thumbnail as a byte array.
+     * @deprecated Use {@link EmbedAuthor#iconAsByteArray(DiscordApi)} instead.
      */
+    @Deprecated
     Optional<CompletableFuture<byte[]>> downloadIconAsByteArray(DiscordApi api);
 
     /**
@@ -58,7 +62,34 @@ public interface EmbedAuthor extends Nameable {
      * @param api The discord api instance used to download the author icon.
      * @return The thumbnail as a input stream.
      * @throws IOException If an IO error occurs.
+     * @deprecated Use {@link EmbedAuthor#iconAsInputStream(DiscordApi)} instead.
      */
+    @Deprecated
     Optional<InputStream> downloadIconAsInputStream(DiscordApi api) throws IOException;
+
+    /**
+     * Downloads the author icon as a {@code BufferedImage}.
+     *
+     * @param api The discord api instance used to download the author icon.
+     * @return The thumbnail as a {@code BufferedImage}.
+     */
+    Optional<CompletableFuture<BufferedImage>> iconAsBufferedImage(DiscordApi api);
+
+    /**
+     * Downloads the author icon as a byte array.
+     *
+     * @param api The discord api instance used to download the author icon.
+     * @return The thumbnail as a byte array.
+     */
+    Optional<CompletableFuture<byte[]>> iconAsByteArray(DiscordApi api);
+
+    /**
+     * Downloads the author icon as an input stream.
+     *
+     * @param api The discord api instance used to download the author icon.
+     * @return The thumbnail as a input stream.
+     * @throws IOException If an IO error occurs.
+     */
+    Optional<InputStream> iconAsInputStream(DiscordApi api) throws IOException;
 
 }
