@@ -1,6 +1,7 @@
 package org.javacord.api.entity.channel;
 
 import org.javacord.api.audio.AudioConnection;
+import org.javacord.api.entity.permission.PermissionType;
 import org.javacord.api.entity.user.User;
 import org.javacord.api.listener.channel.server.voice.ServerVoiceChannelAttachableListenerManager;
 
@@ -71,6 +72,149 @@ public interface ServerVoiceChannel extends ServerChannel, VoiceChannel, Categor
      */
     default boolean isConnected(User user) {
         return isConnected(user.getId());
+    }
+
+    /**
+     * Checks if the given user is a priority speaker in this voice channel.
+     *
+     * @param user The user to check.
+     * @return Whether the given user is a priority speaker or not.
+     */
+    default boolean isPrioritySpeaker(User user) {
+        return hasAnyPermission(user, PermissionType.ADMINISTRATOR, PermissionType.PRIORITY_SPEAKER);
+    }
+
+    /**
+     * Checks if the given user can connect to the voice channel.
+     *
+     * @param user The user to check.
+     * @return Whether the given user can connect or not.
+     */
+    default boolean canConnect(User user) {
+        return hasAnyPermission(user, PermissionType.ADMINISTRATOR, PermissionType.CONNECT);
+    }
+
+    /**
+     * Checks if the user of the connected account can connect to the voice channel.
+     *
+     * @return Whether the user of the connected account can connect or not.
+     */
+    default boolean canYouConnect() {
+        return canConnect(getApi().getYourself());
+    }
+
+    /**
+     * Checks if the given user can mute users in this voice channel.
+     *
+     * @param user The user to check.
+     * @return Whether the given user can mute users or not.
+     */
+    default boolean canMuteUsers(User user) {
+        return hasAnyPermission(user, PermissionType.ADMINISTRATOR, PermissionType.MUTE_MEMBERS);
+    }
+
+    /**
+     * Checks if the user of the connected account can mute users in this voice channel.
+     *
+     * @return Whether the user of the connected account can mute users or not.
+     */
+    default boolean canYouMuteUsers() {
+        return canMuteUsers(getApi().getYourself());
+    }
+
+    /**
+     * Checks if the given user can speak in this voice channel.
+     *
+     * @param user The user to check.
+     * @return Whether the given user can speak or not.
+     */
+    default boolean canSpeak(User user) {
+        return hasAnyPermission(user, PermissionType.ADMINISTRATOR, PermissionType.SPEAK);
+    }
+
+    /**
+     * Checks if the user of the connected account can speak in this voice channel.
+     *
+     * @return Whether the user of the connected account can speak or not.
+     */
+    default boolean canYouSpeak() {
+        return canSpeak(getApi().getYourself());
+    }
+
+    /**
+     * Checks if the given user can use video in this voice channel.
+     *
+     * @param user The user to check.
+     * @return Whether the given user can use video or not.
+     */
+    default boolean canUseVideo(User user) {
+        return hasAnyPermission(user, PermissionType.ADMINISTRATOR, PermissionType.STREAM);
+    }
+
+    /**
+     * Checks if the user of the connected account can use video in this voice channel.
+     *
+     * @return Whether the user of the connected account can use video or not.
+     */
+    default boolean canYouUseVideo() {
+        return canUseVideo(getApi().getYourself());
+    }
+
+    /**
+     * Checks if the given user can move users in this voice channel.
+     *
+     * @param user The user to check.
+     * @return Whether the given user can move users or not.
+     */
+    default boolean canMoveUsers(User user) {
+        return hasAnyPermission(user, PermissionType.ADMINISTRATOR, PermissionType.MOVE_MEMBERS);
+    }
+
+    /**
+     * Checks if the user of the connected account can move users in this voice channel.
+     *
+     * @return Whether the user of the connected account can move users or not.
+     */
+    default boolean canYouMoveUsers() {
+        return canMoveUsers(getApi().getYourself());
+    }
+
+    /**
+     * Checks if the given user can use voice activation in this voice channel.
+     *
+     * @param user The user to check.
+     * @return Whether the given user can use voice activation or not.
+     */
+    default boolean canUseVoiceActivation(User user) {
+        return hasAnyPermission(user, PermissionType.ADMINISTRATOR, PermissionType.USE_VOICE_ACTIVITY);
+    }
+
+    /**
+     * Checks if the user of the connected account can use voice activation in this voice channel.
+     *
+     * @return Whether the user of the connected account can use voice activation or not.
+     */
+    default boolean canYouUseVoiceActivation() {
+        return canUseVoiceActivation(getApi().getYourself());
+    }
+
+    /**
+     * Checks if the given user can deafen users in this voice channel.
+     *
+     * @param user The user to check.
+     * @return Whether the given user can deafen users or not.
+     */
+    default boolean canDeafenUsers(User user) {
+        return hasAnyPermission(user, PermissionType.ADMINISTRATOR, PermissionType.DEAFEN_MEMBERS);
+    }
+
+    /**
+     * Checks if the user of the connected account can deafen users in this voice channel.
+     *
+     * @return Whether the user of the connected account can deafen users or not.
+     */
+    default boolean canYouDeafenUsers() {
+        return canDeafenUsers(getApi().getYourself());
     }
 
     /**
