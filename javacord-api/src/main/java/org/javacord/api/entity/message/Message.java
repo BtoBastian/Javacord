@@ -31,6 +31,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.stream.Stream;
@@ -209,6 +211,87 @@ public interface Message extends DiscordEntity, Comparable<Message>, UpdatableFr
      */
     static CompletableFuture<Void> delete(DiscordApi api, Iterable<Message> messages) {
         return api.getUncachedMessageUtil().delete(messages);
+    }
+
+    /**
+     * Deletes the message after a given delay.
+     *
+     * @param delay The delay.
+     * @param unit The delay time unit.
+     * @param scheduler The scheduler used to schedule the deletion.
+     * @return A future to tell us if the deletion was successful.
+     */
+    default CompletableFuture<Void> deleteAfter(long delay, TimeUnit unit, ScheduledExecutorService scheduler) {
+        final CompletableFuture<Void> future = new CompletableFuture<>();
+
+        scheduler.schedule(
+                () -> {
+                    this.delete().whenComplete((unused, ex) -> {
+                        if (ex != null) {
+                            future.completeExceptionally(ex);
+                        } else {
+                            future.complete(null);
+                        }
+                    });
+                },
+                delay, unit
+        );
+
+        return future;
+    }
+
+    /**
+     * Deletes the message after a given delay.
+     * This method uses the {@link DiscordApi}'s {@link ScheduledExecutorService}.
+     *
+     * @param delay The delay.
+     * @param unit The delay time unit.
+     * @return A future to tell us if the deletion was successful.
+     */
+    default CompletableFuture<Void> deleteAfter(long delay, TimeUnit unit) {
+        return deleteAfter(delay, unit, getApi().getThreadPool().getScheduler());
+    }
+
+    /**
+     * Deletes the message after a given delay.
+     *
+     * @param reason The audit log reason for the deletion.
+     * @param delay The delay.
+     * @param unit The delay time unit.
+     * @param scheduler The scheduler used to schedule the deletion.
+     * @return A future to tell us if the deletion was successful.
+     */
+    default CompletableFuture<Void> deleteAfter(String reason, long delay, TimeUnit unit,
+                                                ScheduledExecutorService scheduler) {
+        final CompletableFuture<Void> future = new CompletableFuture<>();
+
+        scheduler.schedule(
+                () -> {
+                    this.delete(reason).whenComplete((unused, ex) -> {
+                        if (ex != null) {
+                            future.completeExceptionally(ex);
+                        } else {
+                            future.complete(null);
+                        }
+                    });
+                },
+                delay, unit
+        );
+
+        return future;
+    }
+
+    /**
+     * Deletes the message after a given delay.
+     * This method uses the {@link DiscordApi}'s {@link ScheduledExecutorService}.
+     *
+     * @param reason The audit log reason for the deletion.
+     * @param delay The delay.
+     * @param unit The delay time unit.
+     * @return A future to tell us if the deletion was successful.
+     */
+    default CompletableFuture<Void> deleteAfter(String reason, long delay, TimeUnit unit) {
+        return deleteAfter(reason, delay, unit, getApi().getThreadPool().getScheduler());
     }
 
     /**
