@@ -64,5 +64,33 @@ public enum ServerFeature {
     /**
      * Server can be previewed before joining via Membership Screening or the directory.
      */
-    PREVIEW_ENABLED
+    PREVIEW_ENABLED,
+    /**
+     * Server has enabled ticketed events.
+     */
+    TICKETED_EVENTS_ENABLED,
+    /**
+     * Server has enabled monetization.
+     */
+    MONETIZATION_ENABLED,
+    /**
+     * Server has increased custom sticker slots.
+     */
+    MORE_STICKERS,
+    /**
+     * Server has access to the three day archive time for threads.
+     */
+    THREE_DAY_THREAD_ARCHIVE,
+    /**
+     * Server has access to the seven day archive time for threads.
+     */
+    SEVEN_DAY_THREAD_ARCHIVE,
+    /**
+     * Server has access to create private threads.
+     */
+    PRIVATE_THREADS,
+    /**
+     * Server was able to be discovered in the directory before.
+     */
+    ENABLED_DISCOVERABLE_BEFORE
 }
