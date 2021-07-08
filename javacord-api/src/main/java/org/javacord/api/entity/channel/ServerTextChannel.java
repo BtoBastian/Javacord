@@ -115,7 +115,7 @@ public interface ServerTextChannel extends ServerChannel, TextChannel, Mentionab
      * @return Whether this channel enforces a slowmode.
      */
     default boolean hasSlowmode() {
-        return getSlowmodeDelayInSeconds() == 0;
+        return getSlowmodeDelayInSeconds() != 0;
     }
 
     /**
