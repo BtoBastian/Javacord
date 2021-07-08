@@ -89,6 +89,14 @@ public class UncachedMessageUtilImpl implements UncachedMessageUtil, InternalUnc
     }
 
     @Override
+    public CompletableFuture<Void> delete(long webhookId, String webhookToken, long messageId, String reason) {
+        return new RestRequest<Void>(api, RestMethod.DELETE, RestEndpoint.WEBHOOK_MESSAGE)
+                .setUrlParameters(Long.toUnsignedString(webhookId), webhookToken, Long.toUnsignedString(messageId))
+                .setAuditLogReason(reason)
+                .execute(result -> null);
+    }
+
+    @Override
     public CompletableFuture<Void> delete(long channelId, long... messageIds) {
         // split by younger than two weeks / older than two weeks
         Instant twoWeeksAgo = Instant.now().minus(14, ChronoUnit.DAYS);
@@ -192,21 +200,7 @@ public class UncachedMessageUtilImpl implements UncachedMessageUtil, InternalUnc
     @Override
     public CompletableFuture<Message> edit(long channelId, long messageId, String content,
                                         boolean updateContent, EmbedBuilder embed, boolean updateEmbed) {
-        ObjectNode body = JsonNodeFactory.instance.objectNode();
-        if (updateContent) {
-            if (content == null) {
-                body.putNull("content");
-            } else {
-                body.put("content", content);
-            }
-        }
-        if (updateEmbed) {
-            if (embed == null) {
-                body.putNull("embed");
-            } else {
-                ((EmbedBuilderDelegateImpl) embed.getDelegate()).toJsonNode(body.putObject("embed"));
-            }
-        }
+        ObjectNode body = getBody(content, updateContent, embed, updateEmbed);
         return new RestRequest<Message>(api, RestMethod.PATCH, RestEndpoint.MESSAGE)
                 .setUrlParameters(Long.toUnsignedString(channelId), Long.toUnsignedString(messageId))
                 .setBody(body)
@@ -224,6 +218,41 @@ public class UncachedMessageUtilImpl implements UncachedMessageUtil, InternalUnc
             future.completeExceptionally(e);
             return future;
         }
+    }
+
+    @Override
+    public CompletableFuture<Message> edit(long webhookId, String webhookToken, long messageId,
+                                           String content, boolean updateContent, EmbedBuilder embed,
+                                           boolean updateEmbed) {
+        ObjectNode body = getBody(content, updateContent, embed, updateEmbed);
+        return new RestRequest<Message>(api, RestMethod.PATCH, RestEndpoint.WEBHOOK_MESSAGE)
+                .setUrlParameters(Long.toUnsignedString(webhookId), webhookToken, Long.toUnsignedString(messageId))
+                .setBody(body)
+                .execute(result -> {
+                    JsonNode resultJsonBody = result.getJsonBody();
+                    long channelId = result.getJsonBody().get("channel_id").asLong(0L);
+                    return new MessageImpl(api, api.getTextChannelById(channelId).orElseThrow(() ->
+                            new IllegalStateException("TextChannel is missing.")), resultJsonBody);
+                });
+    }
+
+    private ObjectNode getBody(String content, boolean updateContent, EmbedBuilder embed, boolean updateEmbed) {
+        ObjectNode body = JsonNodeFactory.instance.objectNode();
+        if (updateContent) {
+            if (content == null) {
+                body.putNull("content");
+            } else {
+                body.put("content", content);
+            }
+        }
+        if (updateEmbed) {
+            if (embed == null) {
+                body.putNull("embed");
+            } else {
+                ((EmbedBuilderDelegateImpl) embed.getDelegate()).toJsonNode(body.putObject("embed"));
+            }
+        }
+        return body;
     }
 
     @Override

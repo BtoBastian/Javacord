@@ -72,6 +72,17 @@ public interface UncachedMessageUtil extends UncachedMessageAttachableListenerMa
     CompletableFuture<Void> delete(String channelId, String messageId, String reason);
 
     /**
+     * Deletes the message sent by a webhook.
+     *
+     * @param webhookId The id of the webhook.
+     * @param webhookToken The token of the webhook.
+     * @param messageId The id of the message.
+     * @param reason The audit log reason for the deletion.
+     * @return A future to tell us if the deletion was successful.
+     */
+    CompletableFuture<Void> delete(long webhookId, String webhookToken, long messageId, String reason);
+
+    /**
      * Deletes multiple messages at once.
      * This method does not have a size or age restriction.
      * Messages younger than two weeks are sent in batches of 100 messages to the bulk delete API,
@@ -206,6 +217,21 @@ public interface UncachedMessageUtil extends UncachedMessageAttachableListenerMa
      */
     CompletableFuture<Message> edit(String channelId, String messageId, String content, boolean updateContent,
                                  EmbedBuilder embed, boolean updateEmbed);
+
+    /**
+     * Updates the content and the embed of the message sent by a webhook.
+     *
+     * @param webhookId The id of the webhook channel.
+     * @param webhookToken The token of the webhook.
+     * @param messageId The id of the message.
+     * @param content The new content of the message.
+     * @param updateContent Whether to update or remove the content.
+     * @param embed The new embed of the message.
+     * @param updateEmbed Whether to update or remove the embed.
+     * @return A future to check if the update was successful.
+     */
+    CompletableFuture<Message> edit(long webhookId, String webhookToken, long messageId, String content,
+                                 boolean updateContent, EmbedBuilder embed, boolean updateEmbed);
 
     /**
      * Removes the content of the message.
