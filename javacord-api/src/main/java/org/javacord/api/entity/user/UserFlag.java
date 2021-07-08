@@ -11,10 +11,10 @@ public enum UserFlag {
     HOUSE_BALANCE(1 << 8, "House Bravery"),
     EARLY_SUPPORTER(1 << 9, "Early Supporter"),
     TEAM_USER(1 << 10, "Team User"),
-    SYSTEM(1 << 12, "System"),
     BUG_HUNTER_LEVEL_2(1 << 14, "Bug Hunter Level 2"),
     VERIFIED_BOT(1 << 16, "Verified Bot"),
-    VERIFIED_BOT_DEVELOPER(1 << 17, "Verified Bot Developer");
+    EARLY_VERIFIED_BOT_DEVELOPER(1 << 17, "Early Verified Bot Developer"),
+    DISCORD_CERTIFIED_MODERATOR(1 << 18, "Discord Certified Moderator");
 
     private final int flag;
     private final String description;
