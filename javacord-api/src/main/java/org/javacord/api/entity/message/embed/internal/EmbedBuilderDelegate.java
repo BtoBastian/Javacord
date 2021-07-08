@@ -425,4 +425,10 @@ public interface EmbedBuilderDelegate {
      */
     boolean requiresAttachments();
 
+    /**
+     * Clones all fields from an existing embed.
+     *
+     * @param embed An existing embed.
+     */
+    void fillAll(EmbedBuilder embed);
 }

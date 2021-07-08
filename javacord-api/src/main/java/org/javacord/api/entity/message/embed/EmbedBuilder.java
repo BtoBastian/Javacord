@@ -20,6 +20,11 @@ import java.util.function.Predicate;
 public class EmbedBuilder {
 
     /**
+     * Default constructor.
+     */
+    public EmbedBuilder() {}
+
+    /**
      * The embed delegate used by this instance.
      */
     private final EmbedBuilderDelegate delegate = DelegateFactory.createEmbedBuilderDelegate();
@@ -31,6 +36,15 @@ public class EmbedBuilder {
      */
     public EmbedBuilderDelegate getDelegate() {
         return delegate;
+    }
+
+    /**
+     *  Creates an EmbedBuilder using fields in an existing embed.
+     *
+     * @param embed existing embed
+     */
+    public EmbedBuilder(EmbedBuilder embed) {
+        delegate.fillAll(embed);
     }
 
     /**
@@ -682,5 +696,4 @@ public class EmbedBuilder {
     public boolean requiresAttachments() {
         return delegate.requiresAttachments();
     }
-
 }

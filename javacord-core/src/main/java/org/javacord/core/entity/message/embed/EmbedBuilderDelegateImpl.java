@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.javacord.api.entity.Icon;
 import org.javacord.api.entity.message.MessageAuthor;
 import org.javacord.api.entity.message.embed.EditableEmbedField;
+import org.javacord.api.entity.message.embed.EmbedBuilder;
 import org.javacord.api.entity.message.embed.EmbedField;
 import org.javacord.api.entity.message.embed.internal.EmbedBuilderDelegate;
 import org.javacord.api.entity.user.User;
@@ -16,9 +17,11 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -553,4 +556,25 @@ public class EmbedBuilderDelegateImpl implements EmbedBuilderDelegate {
         return object;
     }
 
+    @Override
+    public void fillAll(EmbedBuilder embed) {
+        Field[] fields = getClass().getDeclaredFields();
+
+        try {
+            for (int i = -1; ++i < fields.length;) {
+                fields[i].setAccessible(true);
+                internalFiller(fields[i], fields[i].get(embed.getDelegate()));
+            }
+        }  catch (IllegalAccessException | NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private <T> void internalFiller(Field field, T object) throws IllegalAccessException, NoSuchFieldException {
+        if (object instanceof List<?>) {
+            fields.addAll((Collection<? extends EmbedFieldImpl>) object);
+        } else {
+            getClass().getDeclaredField(field.getName()).set(this, object);
+        }
+    }
 }
