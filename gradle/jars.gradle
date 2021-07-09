@@ -22,14 +22,14 @@ subprojects {
 
 project(':javacord-api') {
     jar {
-        bnd ('Export-Package': "!org.javacord.*.internal.*|*;version=${version.replace("-", ".")};-noimport:=true",
+        bnd ('Export-Package': "!org.javacord.*.internal.*|*;version=${archiveVersion.get().replace("-", ".")};-noimport:=true",
              '-fixupmessages': '^Classes found in the wrong directory: \\\\{META-INF/versions/9/module-info\\.class=module-info}$')
     }
 }
 
 project(':javacord-core') {
     jar {
-        bnd ('Fragment-Host': "org.javacord.api;bundle-version=${version.replace("-", ".")}",
+        bnd ('Fragment-Host': "org.javacord.api;bundle-version=${archiveVersion.get().replace("-", ".")}",
              'Import-Package': '!org.javacord.api.*|*',
              'Export-Package': '',
              '-fixupmessages': '^Classes found in the wrong directory: \\\\{META-INF/versions/9/module-info\\.class=module-info}$')

@@ -36,7 +36,8 @@ allprojects {
         options.incremental true
         if (JavaVersion.current().java9Compatible) {
             afterEvaluate {
-                options.compilerArgs << '--release' << platform.targetCompatibility.majorVersion
+                JavaVersion.toVersion()
+                options.compilerArgs << '--release' << JavaVersion.toVersion(targetCompatibility).majorVersion
             }
         }
     }
