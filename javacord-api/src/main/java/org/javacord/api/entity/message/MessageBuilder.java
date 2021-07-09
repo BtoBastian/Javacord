@@ -670,4 +670,51 @@ public class MessageBuilder {
         return sendWithWebhook(api, matcher.group("id"), matcher.group("token"));
     }
 
+    /**
+     * Edits the message.
+     *
+     * @param message The message to edit.
+     * @return The edited message.
+     */
+    public CompletableFuture<Message> edit(Message message) {
+        return delegate.edit(message, true, true, true);
+    }
+
+    /**
+     * Edits the message.
+     *
+     * @param message The message to edit.
+     * @param updateContent If the content of the message should be updated.
+     * @return The edited message.
+     */
+    public CompletableFuture<Message> edit(Message message, boolean updateContent) {
+        return delegate.edit(message, updateContent, true, true);
+    }
+
+    /**
+     * Edits the message.
+     *
+     * @param message The message to edit.
+     * @param updateContent If the content of the message should be updated.
+     * @param updateEmbeds If the embeds of the message should be updated.
+     * @return The edited message.
+     */
+    public CompletableFuture<Message> edit(Message message, boolean updateContent, boolean updateEmbeds) {
+        return delegate.edit(message, updateContent, updateEmbeds, true);
+    }
+
+    /**
+     * Edits the message.
+     *
+     * @param message The message to edit.
+     * @param updateContent If the content of the message should be updated.
+     * @param updateEmbeds If the embeds of the message should be updated.
+     * @param updateComponents If the components of the message should be updated.
+     * @return The edited message.
+     */
+    public CompletableFuture<Message> edit(Message message,
+                                           boolean updateContent, boolean updateEmbeds, boolean updateComponents) {
+        return delegate.edit(message, updateContent, updateEmbeds, updateComponents);
+    }
+
 }
