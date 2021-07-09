@@ -359,6 +359,54 @@ public interface Message extends DiscordEntity, Comparable<Message>, UpdatableFr
     }
 
     /**
+     * Edits the message.
+     *
+     * @param messageBuilder The message builder for the message.
+     * @return The edited message.
+     */
+    default CompletableFuture<Message> edit(MessageBuilder messageBuilder) {
+        return messageBuilder.edit(this, true, true, true);
+    }
+
+    /**
+     * Edits the message.
+     *
+     * @param messageBuilder The message builder for the message.
+     * @param updateContent If the content of the message should be updated.
+     * @return The edited message.
+     */
+    default CompletableFuture<Message> edit(MessageBuilder messageBuilder, boolean updateContent) {
+        return messageBuilder.edit(this, updateContent, true, true);
+    }
+
+    /**
+     * Edits the message.
+     *
+     * @param messageBuilder The message builder for the message.
+     * @param updateContent If the content of the message should be updated.
+     * @param updateEmbeds If the embeds of the message should be updated.
+     * @return The edited message.
+     */
+    default CompletableFuture<Message> edit(MessageBuilder messageBuilder,
+                                            boolean updateContent, boolean updateEmbeds) {
+        return messageBuilder.edit(this, updateContent, updateEmbeds, true);
+    }
+
+    /**
+     * Edits the message.
+     *
+     * @param messageBuilder The message builder for the message.
+     * @param updateContent If the content of the message should be updated.
+     * @param updateEmbeds If the embeds of the message should be updated.
+     * @param updateComponents If the components of the message should be updated.
+     * @return The edited message.
+     */
+    default CompletableFuture<Message> edit(MessageBuilder messageBuilder, boolean updateContent,
+                                            boolean updateEmbeds, boolean updateComponents) {
+        return messageBuilder.edit(this, updateContent, updateEmbeds, updateComponents);
+    }
+
+    /**
      * Removes the content of the message.
      *
      * @param api The discord api instance.

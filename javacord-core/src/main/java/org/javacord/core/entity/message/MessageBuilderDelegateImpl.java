@@ -567,6 +567,40 @@ public class MessageBuilderDelegateImpl implements MessageBuilderDelegate {
         });
     }
 
+
+    @Override
+    public CompletableFuture<Message> edit(Message message, boolean updateContent,
+                                           boolean updateEmbeds, boolean updateComponents) {
+        ObjectNode body = JsonNodeFactory.instance.objectNode();
+
+        if (updateContent) {
+            body.put("content", strBuilder.toString());
+        }
+
+        if (updateEmbeds) {
+            if (embeds.size() != 0) {
+                // Discord now supports multiple embeds for Discord bots.
+                ArrayNode embedsNode = JsonNodeFactory.instance.objectNode().arrayNode();
+                for (int i = 0; i < embeds.size() && i < 10; i++) {
+                    embedsNode.add(((EmbedBuilderDelegateImpl) embeds.get(i).getDelegate()).toJsonNode());
+                }
+                body.set("embeds", embedsNode);
+            }
+        }
+
+        if (updateComponents) {
+            prepareComponents(body);
+        }
+
+        return new RestRequest<Message>(message.getApi(), RestMethod.PATCH, RestEndpoint.MESSAGE)
+                .setUrlParameters(Long.toUnsignedString(message.getChannel().getId()),
+                        Long.toUnsignedString(message.getId()))
+                .setBody(body).execute(result -> new MessageImpl((DiscordApiImpl) message.getApi(),
+                        message.getApi().getTextChannelById(
+                                message.getChannel().getId()).orElseThrow(() ->
+                        new IllegalStateException("TextChannel is missing.")), result.getJsonBody()));
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
     // Internal MessageBuilder utility methods
     ////////////////////////////////////////////////////////////////////////////////

@@ -351,6 +351,18 @@ public interface MessageBuilderDelegate {
     CompletableFuture<Message> send(Messageable messageable);
 
     /**
+     * Edits the message.
+     *
+     * @param message The message to edit.
+     * @param updateContent If the content of the message should be updated.
+     * @param updateEmbeds If the embeds of the message should be updated.
+     * @param updateComponents If the components of the message should be updated.
+     * @return The edited message.
+     */
+    CompletableFuture<Message> edit(Message message, boolean updateContent,
+                                    boolean updateEmbeds, boolean updateComponents);
+
+    /**
      * Sends the message.
      *
      * @param api The api instance needed to send and return the message.
