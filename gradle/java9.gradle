@@ -27,7 +27,7 @@ if (JavaVersion.current().java9Compatible) {
             source sourceSets.main.java
             source 'src/main/java9/'
             classpath = files()
-            destinationDir = file("$buildDir/classes/java9/main")
+            destinationDirectory = file("$buildDir/classes/java9/main")
             sourceCompatibility = 9
             targetCompatibility = 9
             options.compilerArgs << '--add-modules' << 'java.annotation'
