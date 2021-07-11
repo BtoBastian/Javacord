@@ -396,6 +396,13 @@ public class DiscordApiBuilderDelegateImpl implements DiscordApiBuilderDelegate 
     }
 
     @Override
+    public void addIntents(Intent... intents) {
+        this.intents.addAll(Arrays.stream(intents)
+                .filter(intent -> !this.intents.contains(intent))
+                .collect(Collectors.toList()));
+    }
+
+    @Override
     public CompletableFuture<Void> setRecommendedTotalShards() {
         CompletableFuture<Void> future = new CompletableFuture<>();
         if (token == null) {

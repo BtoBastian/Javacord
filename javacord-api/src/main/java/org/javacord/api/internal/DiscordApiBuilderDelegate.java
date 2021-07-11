@@ -179,6 +179,14 @@ public interface DiscordApiBuilderDelegate {
     void setAllIntentsWhere(Predicate<Intent> condition);
 
     /**
+     * Adds the intents specified to the current list of
+     * intents.
+     *
+     * @param intents The intents to add.
+     */
+    void addIntents(Intent... intents);
+
+    /**
      * Logs the bot in.
      *
      * @return The discord api instance.
