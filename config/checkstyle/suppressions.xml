@@ -7,5 +7,5 @@
 <suppressions>
     <suppress id="finalizer" files=".*[\\/]DiscordApiImpl.java$" />
     <suppress checks="LineLength|CustomImportOrder|OverloadMethodsDeclarationOrder|Indentation"
-              files="[\\/]build[\\/][^\\/]+[\\/]generated[\\/]" />
+              files="[/\\]generated[/\\]" />
 </suppressions>

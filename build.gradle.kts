@@ -36,7 +36,6 @@ subprojects {
 }
 
 // TODO Create properties file with git information
-// TODO Add checkstyle checks
 
 apply(from = "gradle/jars.gradle")
 apply(from = "gradle/java9.gradle")
@@ -46,3 +45,4 @@ apply(from = "gradle/listener-manager-generation.gradle")
 apply(from = "gradle/event-dispatcher-generation.gradle")
 apply(from = "gradle/readme.gradle")
 apply(from = "gradle/publishing.gradle")
+apply(from = "gradle/checkstyle.gradle.kts")
