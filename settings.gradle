@@ -1,4 +1,0 @@
-rootProject.name = 'javacord'
-
-include 'javacord-api'
-include 'javacord-core'
