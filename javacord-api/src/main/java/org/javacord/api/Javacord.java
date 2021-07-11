@@ -56,42 +56,22 @@ public class Javacord {
 
     static {
         Properties versionProperties = new Properties();
-        try (InputStream versionPropertiesStream = Javacord.class.getResourceAsStream("/version.properties")) {
+        try (InputStream versionPropertiesStream = Javacord.class.getResourceAsStream("/git.properties")) {
             versionProperties.load(versionPropertiesStream);
         } catch (IOException ignored) { }
 
-        String version = versionProperties.getProperty("version", "$version");
-        switch (version) {
-            case "$version":
-                VERSION = "<unknown>";
-                break;
+        VERSION = versionProperties.getProperty("version", "<unknown>");
+        COMMIT_ID = versionProperties.getProperty("git.commit.id.abbrev", "<unknown>");
 
-            default:
-                VERSION = version;
+        String buildTimestamp = versionProperties.getProperty("buildTimestamp", null);
+        if (buildTimestamp == null) {
+            BUILD_TIMESTAMP = null;
+        } else {
+            BUILD_TIMESTAMP = Instant.parse(buildTimestamp);
         }
 
-        String commitId = versionProperties.getProperty("commitId", "$commitId");
-        switch (commitId) {
-            case "$commitId":
-                COMMIT_ID = "<unknown>";
-                break;
-
-            default:
-                COMMIT_ID = commitId;
-        }
-
-        String buildTimestamp = versionProperties.getProperty("buildTimestamp", "$buildTimestamp");
-        switch (buildTimestamp) {
-            case "$buildTimestamp":
-                BUILD_TIMESTAMP = null;
-                break;
-
-            default:
-                BUILD_TIMESTAMP = Instant.parse(buildTimestamp);
-        }
-
-        DISPLAY_VERSION = version.endsWith("-SNAPSHOT")
-                ? String.format("%s [%s | %s]", VERSION, COMMIT_ID, BUILD_TIMESTAMP)
+        DISPLAY_VERSION = VERSION.endsWith("-SNAPSHOT")
+                ? String.format("%s [%s]", VERSION, BUILD_TIMESTAMP)
                 : VERSION;
     }
 

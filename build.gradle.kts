@@ -35,8 +35,6 @@ subprojects {
     description = "An easy to use multithreaded library for creating Discord bots in Java ($shortName)"
 }
 
-// TODO Create properties file with git information
-
 apply(from = "gradle/jars.gradle")
 apply(from = "gradle/java9.gradle")
 apply(from = "gradle/tests.gradle")
