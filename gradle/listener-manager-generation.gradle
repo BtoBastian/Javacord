@@ -340,7 +340,6 @@ configure([javacordApi, javacordCore]) {
     // we only want to set the generated flag, not the tasks
     configure([tasks.idea, ideaModule]) {
         enabled false
-        tasks.remove it
     }
 }
 

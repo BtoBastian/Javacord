@@ -1,5 +1,5 @@
 subprojects {
-    apply plugin: 'osgi'
+    apply plugin: 'biz.aQute.bnd.builder'
 
     task javadocJar(type: Jar) {
         group 'build'
@@ -13,6 +13,7 @@ subprojects {
         description 'Assembles a jar archive containing the Java source files.'
         classifier 'sources'
         from sourceSets.main.allJava
+        duplicatesStrategy DuplicatesStrategy.EXCLUDE
     }
 
     artifacts {
@@ -22,19 +23,17 @@ subprojects {
 
 project(':javacord-api') {
     jar {
-        manifest {
-            instruction 'Export-Package', '!org.javacord.*.internal.*', "*;version=$version;-noimport:=true"
-        }
+        bnd ('Export-Package': "!org.javacord.*.internal.*|*;version=${archiveVersion.get().replace("-", ".")};-noimport:=true",
+             '-fixupmessages': '^Classes found in the wrong directory: \\\\{META-INF/versions/9/module-info\\.class=module-info}$')
     }
 }
 
 project(':javacord-core') {
     jar {
-        manifest {
-            instruction 'Fragment-Host', "org.javacord.api;bundle-version=\"[$version,$version]\""
-            instruction 'Import-Package', '!org.javacord.api.*', '*'
-            instruction 'Export-Package', ''
-        }
+        bnd ('Fragment-Host': "org.javacord.api;bundle-version=${archiveVersion.get().replace("-", ".")}",
+             'Import-Package': '!org.javacord.api.*|*',
+             'Export-Package': '',
+             '-fixupmessages': '^Classes found in the wrong directory: \\\\{META-INF/versions/9/module-info\\.class=module-info}$')
     }
 }
 
@@ -42,8 +41,6 @@ project(':javacord-core') {
 configurations.archives.artifacts.clear()
 
 apply plugin: 'com.github.johnrengelman.shadow'
-// remove non-sense task from com.github.johnrengelman.shadow plugin
-tasks.remove knows
 
 shadowJar {
     classifier 'shaded'

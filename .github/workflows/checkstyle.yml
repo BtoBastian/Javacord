@@ -21,9 +21,9 @@ jobs:
       - name: Setup Reviewdog
         uses: reviewdog/action-setup@v1
       - name: Run reviewdog
-        run: cat build/javacord-core/reports/checkstyle/main.xml \
+        run: cat javacord-core/build/reports/checkstyle/main.xml \
           | reviewdog -f=checkstyle -name="Check style (core)" -reporter=github-pr-check -filter-mode="nofilter" \
-          && cat build/javacord-api/reports/checkstyle/main.xml \
+          && cat javacord-api/build/reports/checkstyle/main.xml \
           | reviewdog -f=checkstyle -name="Check style (api)" -reporter=github-pr-check -filter-mode="nofilter"
         env:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}

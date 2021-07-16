@@ -2,7 +2,7 @@ import javax.naming.ConfigurationException
 
 subprojects {
     tasks.withType(Javadoc) { javadocTask ->
-        def java9ToolChain = JavaVersion.toVersion(toolChain.version).java9Compatible
+        def java9ToolChain = JavaVersion.current().java9Compatible
         // use taskGraph.whenReady to not always have a custom action which makes the task uncachable
         gradle.taskGraph.whenReady {
             if (it.hasTask(javadocTask)) {
