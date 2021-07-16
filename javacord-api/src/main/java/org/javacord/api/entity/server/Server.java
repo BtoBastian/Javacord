@@ -1795,6 +1795,24 @@ public interface Server extends DiscordEntity, Nameable, UpdatableFromCache<Serv
     }
 
     /**
+     * Requests a server member.
+     *
+     * @param user The user to request as a member.
+     * @return A future to get a server member if it exists in the server.
+     */
+    default CompletableFuture<User> requestMember(User user) {
+        return requestMember(user.getId());
+    }
+
+    /**
+     * Requests a server member.
+     *
+     * @param userId The user id of the member to request.
+     * @return A future to get a server member if it exists in the server.
+     */
+    CompletableFuture<User> requestMember(long userId);
+
+    /**
      * Undeafens the given user on the server.
      *
      * @param user The user to undeafen.
