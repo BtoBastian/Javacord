@@ -35,12 +35,12 @@ subprojects {
     description = "An easy to use multithreaded library for creating Discord bots in Java ($shortName)"
 }
 
+apply(from = "gradle/readme.gradle.kts")
 apply(from = "gradle/jars.gradle")
 apply(from = "gradle/java9.gradle")
 apply(from = "gradle/tests.gradle")
 apply(from = "gradle/javadoc.gradle")
 apply(from = "gradle/listener-manager-generation.gradle")
 apply(from = "gradle/event-dispatcher-generation.gradle")
-apply(from = "gradle/readme.gradle")
 apply(from = "gradle/publishing.gradle")
 apply(from = "gradle/checkstyle.gradle.kts")
