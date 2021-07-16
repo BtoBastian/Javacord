@@ -440,6 +440,28 @@ public class DiscordApiBuilder implements ChainableGloballyAttachableListenerMan
     }
 
     /**
+     * Sets whether or not the user cache should be enabled.
+     *
+     * <p>By default, the user cache is disabled.
+     *
+     * @param enabled Whether or not the user cache should be enabled.
+     * @return The current instance in order to chain call methods.
+     */
+    public DiscordApiBuilder setUserCacheEnabled(boolean enabled) {
+        delegate.setUserCacheEnabled(enabled);
+        return this;
+    }
+
+    /**
+     * Gets whether or not the user cache is enabled.
+     *
+     * @return Whether or not the user cache is enabled.
+     */
+    public boolean isUserCachedEnabled() {
+        return delegate.isUserCacheEnabled();
+    }
+
+    /**
      * Retrieves the recommended shards count from the Discord API and sets it in this builder.
      * Sharding allows you to split your bot into several independent instances.
      * A shard only handles a subset of a bot's servers.

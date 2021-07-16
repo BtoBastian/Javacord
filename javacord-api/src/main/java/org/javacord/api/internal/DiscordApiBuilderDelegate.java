@@ -179,6 +179,22 @@ public interface DiscordApiBuilderDelegate {
     void setAllIntentsWhere(Predicate<Intent> condition);
 
     /**
+     * Sets whether or not the user cache should be enabled.
+     *
+     * <p>By default, the user cache is disabled.
+     *
+     * @param enabled Whether or not the user cache should be enabled.
+     */
+    void setUserCacheEnabled(boolean enabled);
+
+    /**
+     * Gets whether or not the user cache is enabled.
+     *
+     * @return Whether or not the user cache is enabled.
+     */
+    boolean isUserCacheEnabled();
+
+    /**
      * Logs the bot in.
      *
      * @return The discord api instance.
