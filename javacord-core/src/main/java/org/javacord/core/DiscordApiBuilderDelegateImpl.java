@@ -130,6 +130,11 @@ public class DiscordApiBuilderDelegateImpl implements DiscordApiBuilderDelegate 
             .filter(intent -> !intent.isPrivileged()).collect(Collectors.toCollection(HashSet::new));
 
     /**
+     * Whether the user cache should be enabled or not.
+     */
+    private boolean userCacheEnabled = false;
+
+    /**
      * The globally attachable listeners to register for every created DiscordApi instance.
      */
     private final Map<Class<? extends GloballyAttachableListener>,
@@ -194,7 +199,7 @@ public class DiscordApiBuilderDelegateImpl implements DiscordApiBuilderDelegate 
             new DiscordApiImpl(accountType, token, currentShard.get(), totalShards.get(), intents,
                     waitForServersOnStartup, waitForUsersOnStartup, registerShutdownHook, globalRatelimiter,
                     gatewayIdentifyRatelimiter, proxySelector, proxy, proxyAuthenticator, trustAllCertificates,
-                    future, null, preparedListeners, preparedUnspecifiedListeners);
+                    future, null, preparedListeners, preparedUnspecifiedListeners, userCacheEnabled);
         }
         return future;
     }
@@ -393,6 +398,16 @@ public class DiscordApiBuilderDelegateImpl implements DiscordApiBuilderDelegate 
                 intents.add(value);
             }
         }
+    }
+
+    @Override
+    public void setUserCacheEnabled(boolean enabled) {
+        userCacheEnabled = enabled;
+    }
+
+    @Override
+    public boolean isUserCacheEnabled() {
+        return userCacheEnabled;
     }
 
     @Override

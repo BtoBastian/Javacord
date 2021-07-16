@@ -420,10 +420,8 @@ public class ServerImpl implements Server, Cleanupable, InternalServerAttachable
                         .orElse(null);
 
                 if (user == null) {
-                    // In theory, every user in "presences" should also be in "members", but Discord is weird
-                    // sometimes. This happens very rarely, but when it happens, we should ignore the presence.
+                    // Ignore rouge presences.
                     // It might be a similar issue than https://github.com/discordapp/discord-api-docs/issues/855
-                    logger.debug("Found rogue presence. Ignoring it. ({})", presenceJson);
                     continue;
                 }
 

@@ -462,7 +462,7 @@ public class DiscordApiImpl implements DiscordApi, DispatchQueueSelector {
     ) {
         this(accountType, token, currentShard, totalShards, intents, waitForServersOnStartup, waitForUsersOnStartup,
                 true, globalRatelimiter, gatewayIdentifyRatelimiter, proxySelector, proxy, proxyAuthenticator,
-                trustAllCertificates, ready, null, Collections.emptyMap(), Collections.emptyList());
+                trustAllCertificates, ready, null, Collections.emptyMap(), Collections.emptyList(), false);
     }
 
     /**
@@ -509,7 +509,7 @@ public class DiscordApiImpl implements DiscordApi, DispatchQueueSelector {
             Dns dns) {
         this(accountType, token, currentShard, totalShards, intents, waitForServersOnStartup, waitForUsersOnStartup,
                 true, globalRatelimiter, gatewayIdentifyRatelimiter, proxySelector, proxy, proxyAuthenticator,
-                trustAllCertificates, ready, dns, Collections.emptyMap(), Collections.emptyList());
+                trustAllCertificates, ready, dns, Collections.emptyMap(), Collections.emptyList(), false);
     }
 
     /**
@@ -532,13 +532,14 @@ public class DiscordApiImpl implements DiscordApi, DispatchQueueSelector {
      *                                      websocket.
      * @param proxyAuthenticator            The authenticator that should be used to authenticate against proxies that
      *                                      require it.
-     * @param trustAllCertificates           Whether to trust all SSL certificates.
+     * @param trustAllCertificates          Whether to trust all SSL certificates.
      * @param ready                         The future which will be completed when the connection to Discord was
      *                                      successful.
      * @param dns                           The DNS instance to use in the OkHttp client. This should only be used in
      *                                      testing.
      * @param listenerSourceMap             The functions to create listeners for pre-registration.
-     * @param unspecifiedListeners           The listeners of unspecified types to pre-register.
+     * @param unspecifiedListeners          The listeners of unspecified types to pre-register.
+     * @param userCacheEnabled              Whether or not the user cache should be enabled.
      */
     @SuppressWarnings("unchecked")
     public DiscordApiImpl(
@@ -561,7 +562,9 @@ public class DiscordApiImpl implements DiscordApi, DispatchQueueSelector {
             Map<Class<? extends GloballyAttachableListener>,
                     List<Function<DiscordApi,GloballyAttachableListener>>
                     > listenerSourceMap,
-            List<Function<DiscordApi, GloballyAttachableListener>> unspecifiedListeners) {
+            List<Function<DiscordApi, GloballyAttachableListener>> unspecifiedListeners,
+            boolean userCacheEnabled
+    ) {
         this.accountType = accountType;
         this.token = token;
         this.currentShard = currentShard;
@@ -575,7 +578,7 @@ public class DiscordApiImpl implements DiscordApi, DispatchQueueSelector {
         this.proxyAuthenticator = proxyAuthenticator;
         this.trustAllCertificates = trustAllCertificates;
         this.intents = intents;
-        userCacheEnabled = intents.contains(Intent.GUILD_MEMBERS);
+        this.userCacheEnabled = userCacheEnabled;
         this.reconnectDelayProvider = x ->
                 (int) Math.round(Math.pow(x, 1.5) - (1 / (1 / (0.1 * x) + 1)) * Math.pow(x, 1.5));
 
@@ -940,6 +943,9 @@ public class DiscordApiImpl implements DiscordApi, DispatchQueueSelector {
      * @param member The member to add.
      */
     public void addMemberToCacheOrReplaceExisting(Member member) {
+        if (!isUserCacheEnabled()) {
+            return;
+        }
         entityCache.getAndUpdate(cache -> {
             Member oldMember = cache.getMemberCache()
                     .getMemberByIdAndServer(member.getId(), member.getServer().getId())
