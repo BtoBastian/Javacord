@@ -1408,6 +1408,14 @@ public class ServerImpl implements Server, Cleanupable, InternalServerAttachable
     }
 
     @Override
+    public CompletableFuture<User> requestMember(long userId) {
+        return new RestRequest<User>(getApi(), RestMethod.GET, RestEndpoint.SERVER_MEMBER)
+                .setUrlParameters(getIdAsString(), Long.toUnsignedString(userId))
+                .execute(result ->  new MemberImpl(api, this, result.getJsonBody(), null).getUser());
+
+    }
+
+    @Override
     public CompletableFuture<Void> kickUser(User user, String reason) {
         return new RestRequest<Void>(getApi(), RestMethod.DELETE, RestEndpoint.SERVER_MEMBER)
                 .setUrlParameters(getIdAsString(), user.getIdAsString())
